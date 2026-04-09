@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Luke D'Amato — Construction Systems & Project Technology</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@300;400;500;600&family=Barlow+Condensed:wght@300;400;600;700&family=JetBrains+Mono:wght@300;400&display=swap" media="all" crossorigin="anonymous">
+<style>
+/* Font fallbacks if Google Fonts blocked */
+@font-face{font-family:'Bebas Neue';font-style:normal;font-weight:400;src:local('Bebas Neue'),local('BebasNeue-Regular');}
+</style>
+<style>
+:root{
+  --bg:#080b10;--panel:#111820;--panel2:#151d27;
+  --border:rgba(0,255,65,.07);--borderb:rgba(0,255,65,.2);
+  --accent:#00ff41;--accent2:#00aa2a;--adim:rgba(0,255,65,.08);
+  --mg:#00ff41;--amber:#f5a623;
+  --text:#d4dde8;--textd:#6a7d91;--textb:#eef4ff;
+  --mono:'JetBrains Mono','Courier New',monospace;--disp:'Bebas Neue','Arial Narrow',Impact,sans-serif;
+  --body:'Barlow','Helvetica Neue',Arial,sans-serif;--cond:'Barlow Condensed','Arial Narrow',Arial,sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--text);font-family:var(--body);font-weight:300;line-height:1.6;overflow-x:hidden;cursor:none;}
+
+/* CURSOR */
+#cur{position:fixed;width:12px;height:12px;background:#ff00b4;border-radius:50%;pointer-events:none;z-index:9999;top:0;left:0;transform:translate(-50%,-50%);mix-blend-mode:screen;transition:width .15s,height .15s,background .2s;}
+#cur-ring{position:fixed;width:38px;height:38px;border:1px solid rgba(255,0,180,.55);border-radius:50%;pointer-events:none;z-index:9998;top:0;left:0;transform:translate(-50%,-50%);transition:width .22s,height .22s,border-color .2s;}
+body.link-hover #cur{width:20px;height:20px;background:var(--amber);}
+body.link-hover #cur-ring{width:54px;height:54px;border-color:var(--amber);}
+
+/* CANVAS */
+#bgc{position:fixed;inset:0;z-index:0;pointer-events:none;}
+
+/* SCANLINES */
+body::after{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.035) 2px,rgba(0,0,0,.035) 4px);pointer-events:none;z-index:500;}
+
+#app{position:relative;z-index:1;}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:center;justify-content:space-between;padding:22px 52px;background:linear-gradient(to bottom,rgba(8,11,16,.96),transparent);}
+.nav-logo{font-family:var(--mono);font-size:12px;color:var(--mg);letter-spacing:.15em;text-transform:uppercase;}
+.nav-logo span{color:var(--textd);}
+.nav-links{display:flex;gap:36px;}
+.nav-links a{font-family:var(--cond);font-size:13px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:var(--textd);text-decoration:none;cursor:none;transition:color .2s;position:relative;}
+.nav-links a::after{content:'';position:absolute;bottom:-4px;left:0;width:0;height:1px;background:var(--mg);transition:width .25s;}
+.nav-links a:hover,.nav-links a.active{color:var(--mg);}
+.nav-links a:hover::after,.nav-links a.active::after{width:100%;}
+
+/* PAGES */
+.page{display:none;min-height:100vh;}.page.active{display:block;}
+.rev{opacity:0;transform:translateY(22px);transition:opacity .6s ease,transform .6s ease;}.rev.vis{opacity:1;transform:none;}
+.gdiv{height:1px;background:linear-gradient(to right,transparent,var(--mg),transparent);opacity:.25;}
+.slabel{font-family:var(--mono);font-size:10px;letter-spacing:.3em;color:var(--mg);text-transform:uppercase;margin-bottom:20px;display:flex;align-items:center;gap:12px;}
+.slabel::before{content:'';display:inline-block;width:28px;height:1px;background:var(--mg);}
+
+/* BUTTONS */
+.btn-p{font-family:var(--cond);font-size:13px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;padding:14px 32px;background:var(--mg);color:#000;border:none;cursor:none;transition:background .2s,transform .15s;clip-path:polygon(0 0,calc(100% - 10px) 0,100% 10px,100% 100%,10px 100%,0 calc(100% - 10px));}
+.btn-p:hover{background:var(--amber);transform:translateY(-2px);}
+.btn-s{font-family:var(--cond);font-size:13px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;padding:14px 32px;background:transparent;color:var(--mg);border:1px solid var(--borderb);cursor:none;transition:background .2s,border-color .2s,transform .15s;}
+.btn-s:hover{background:var(--adim);border-color:var(--mg);transform:translateY(-2px);}
+
+/* HERO */
+.hero{min-height:100vh;display:flex;flex-direction:column;justify-content:center;padding:140px 52px 80px;position:relative;overflow:hidden;}
+.hero-tag{font-family:var(--mono);font-size:11px;color:var(--mg);letter-spacing:.25em;text-transform:uppercase;margin-bottom:28px;opacity:0;animation:fadeUp .7s .3s forwards;}
+.hero h1{font-family:var(--disp);font-size:clamp(62px,9vw,128px);line-height:.92;letter-spacing:.02em;color:var(--textb);opacity:0;animation:fadeUp .8s .45s forwards;}
+.hero h1 .al{color:var(--mg);display:block;}
+.hero-sub{margin-top:32px;font-family:var(--cond);font-size:18px;font-weight:300;color:var(--textd);max-width:560px;line-height:1.5;opacity:0;animation:fadeUp .8s .6s forwards;}
+.hero-ctas{display:flex;gap:16px;margin-top:44px;opacity:0;animation:fadeUp .8s .75s forwards;}
+.hero-stats{display:flex;gap:52px;margin-top:72px;padding-top:40px;border-top:1px solid rgba(0,255,65,.08);opacity:0;animation:fadeUp .8s .9s forwards;}
+.hero-stats .num{font-family:var(--disp);font-size:42px;color:var(--mg);line-height:1;}
+.hero-stats .lbl{font-family:var(--mono);font-size:10px;letter-spacing:.15em;color:var(--textd);text-transform:uppercase;margin-top:4px;}
+.hline{position:absolute;right:52px;top:140px;bottom:80px;width:1px;background:linear-gradient(to bottom,transparent,rgba(0,255,65,.3) 30%,rgba(0,255,65,.3) 70%,transparent);opacity:0;animation:fadeIn 1s .9s forwards;}
+.hline::after{content:'';position:absolute;right:-3px;top:40%;width:7px;height:7px;background:var(--mg);border-radius:50%;box-shadow:0 0 14px var(--mg);}
+
+/* ABOUT */
+.section{padding:100px 52px;}
+.about-grid{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:start;}
+.about-text h2{font-family:var(--disp);font-size:clamp(38px,5vw,64px);color:var(--textb);line-height:.95;margin-bottom:28px;letter-spacing:.02em;}
+.about-text p{font-size:15px;color:var(--textd);line-height:1.75;margin-bottom:16px;}
+.tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:28px;}
+.tag{font-family:var(--mono);font-size:10px;letter-spacing:.1em;padding:5px 12px;border:1px solid var(--borderb);color:var(--mg);background:var(--adim);text-transform:uppercase;}
+.sp{background:var(--panel);border:1px solid rgba(0,255,65,.1);padding:36px;font-family:var(--mono);font-size:12px;color:var(--textd);line-height:1.9;}
+.sp .sh{color:var(--mg);margin-bottom:12px;font-size:10px;letter-spacing:.2em;}
+.sp span{color:var(--textb);}
+.sp .sdiv{margin-top:20px;padding-top:20px;border-top:1px solid rgba(0,255,65,.08);}
+
+/* PILLARS */
+.psec{padding:80px 52px 100px;}
+.togwrap{display:flex;margin-bottom:52px;border:1px solid var(--borderb);width:fit-content;}
+.tog{font-family:var(--cond);font-size:12px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;padding:12px 28px;background:transparent;color:var(--textd);border:none;cursor:none;transition:all .2s;}
+.tog.active{background:var(--mg);color:#000;}
+.pgrid{display:none;grid-template-columns:repeat(3,1fr);gap:2px;}
+.pgrid.active{display:grid;}
+.pcard{background:var(--panel);border:1px solid rgba(0,255,65,.08);padding:36px 32px;position:relative;overflow:hidden;transition:background .25s,border-color .25s,transform .2s;}
+.pcard::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--mg);transform:scaleX(0);transform-origin:left;transition:transform .3s;}
+.pcard:hover{background:var(--panel2);border-color:var(--borderb);transform:translateY(-3px);}
+.pcard:hover::before{transform:scaleX(1);}
+.pnum{font-family:var(--mono);font-size:10px;color:var(--mg);letter-spacing:.2em;margin-bottom:18px;opacity:.6;}
+.picon{font-size:28px;margin-bottom:16px;}
+.ptitle{font-family:var(--cond);font-size:18px;font-weight:700;letter-spacing:.05em;color:var(--textb);margin-bottom:12px;text-transform:uppercase;}
+.pdesc{font-size:13px;color:var(--textd);line-height:1.65;}
+
+/* WORK */
+#work{padding-top:120px;}
+.work-hero{padding:40px 52px 80px;}
+.work-hero h1{font-family:var(--disp);font-size:clamp(52px,8vw,110px);line-height:.92;color:var(--textb);letter-spacing:.02em;}
+.work-hero h1 span{color:var(--mg);}
+.pgj{padding:0 52px 80px;display:grid;grid-template-columns:1fr 1fr;gap:2px;}
+.pj{background:var(--panel);border:1px solid rgba(0,255,65,.08);padding:40px 36px;position:relative;overflow:hidden;transition:background .2s,border-color .2s;}
+.pj.feat{grid-column:1/-1;display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:start;}
+.pj.wide{grid-column:1/-1;display:block;}
+.pj:hover{background:var(--panel2);border-color:var(--borderb);}
+.pj::after{content:'';position:absolute;bottom:0;left:36px;right:36px;height:1px;background:linear-gradient(to right,transparent,var(--mg),transparent);transform:scaleX(0);transition:transform .4s;}
+.pj:hover::after{transform:scaleX(1);}
+.pjn{font-family:var(--mono);font-size:10px;letter-spacing:.2em;color:var(--mg);margin-bottom:14px;opacity:.5;}
+.pjt{font-family:var(--cond);font-size:22px;font-weight:700;letter-spacing:.04em;color:var(--textb);margin-bottom:10px;text-transform:uppercase;}
+.pjd{font-size:13px;color:var(--textd);margin-bottom:20px;line-height:1.65;}
+.pjtags{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:20px;}
+.pjtag{font-family:var(--mono);font-size:9px;letter-spacing:.12em;padding:4px 10px;border:1px solid rgba(0,255,65,.18);color:var(--textd);text-transform:uppercase;}
+.pjo{font-family:var(--cond);font-size:13px;font-weight:600;letter-spacing:.05em;color:var(--mg);padding-left:14px;border-left:2px solid var(--mg);}
+.fbox{margin-top:28px;background:var(--bg);border:1px solid rgba(0,255,65,.1);padding:24px;font-family:var(--mono);font-size:11px;color:var(--textd);line-height:1.8;}
+.fbox .fh{color:var(--mg);margin-bottom:10px;}
+
+/* EVO GRID */
+.evo-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;margin-top:32px;}
+.evo-card{background:var(--panel);border:1px solid rgba(0,255,65,.08);padding:28px 24px;transition:background .2s,border-color .2s;}
+.evo-card:hover{background:var(--panel2);border-color:var(--borderb);}
+.evo-card.span-full{grid-column:1/-1;background:rgba(0,255,65,.05);border-color:rgba(0,255,65,.22);}
+.evo-n{font-family:var(--mono);font-size:10px;color:var(--mg);letter-spacing:.2em;margin-bottom:10px;opacity:.7;}
+.evo-t{font-family:var(--cond);font-size:15px;font-weight:700;letter-spacing:.04em;color:var(--textb);text-transform:uppercase;margin-bottom:10px;}
+.evo-b{font-size:12px;color:var(--textd);line-height:1.65;margin-bottom:14px;}
+.evo-s{font-family:var(--mono);font-size:10px;color:var(--mg);letter-spacing:.08em;padding-left:10px;border-left:2px solid var(--mg);}
+
+/* SKILLS */
+.ssec{padding:80px 52px 100px;border-top:1px solid rgba(0,255,65,.08);}
+.ssec h2{font-family:var(--disp);font-size:clamp(32px,4vw,52px);color:var(--textb);letter-spacing:.02em;margin-bottom:48px;}
+.scols{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;}
+.scol{background:var(--panel);padding:32px 28px;border:1px solid rgba(0,255,65,.08);}
+.scol-t{font-family:var(--mono);font-size:10px;letter-spacing:.2em;color:var(--mg);text-transform:uppercase;margin-bottom:20px;padding-bottom:12px;border-bottom:1px solid rgba(0,255,65,.08);}
+.ski{font-family:var(--cond);font-size:14px;color:var(--textd);padding:7px 0;border-bottom:1px solid rgba(255,255,255,.03);display:flex;align-items:center;gap:8px;transition:color .2s;}
+.ski:hover{color:var(--textb);}
+.ski::before{content:'▸';color:var(--mg);font-size:10px;flex-shrink:0;}
+
+/* CONSULT */
+#consult{padding-top:120px;}
+.ch{padding:40px 52px 80px;display:grid;grid-template-columns:1.3fr 1fr;gap:80px;align-items:center;}
+.ch h1{font-family:var(--disp);font-size:clamp(52px,7vw,100px);line-height:.92;color:var(--textb);letter-spacing:.02em;}
+.ch h1 span{color:var(--mg);}
+.cht{font-size:15px;color:var(--textd);line-height:1.75;}
+.cht p{margin-bottom:16px;}
+.osec{padding:0 52px 80px;}
+.ogrid{display:grid;grid-template-columns:repeat(2,1fr);gap:2px;}
+.oc{background:var(--panel);border:1px solid rgba(0,255,65,.08);padding:40px 36px;transition:background .2s,border-color .2s;}
+.oc:hover{background:var(--panel2);border-color:var(--borderb);}
+.oi{font-size:32px;margin-bottom:20px;}
+.ot{font-family:var(--cond);font-size:20px;font-weight:700;letter-spacing:.04em;color:var(--textb);text-transform:uppercase;margin-bottom:14px;}
+.ol{list-style:none;margin-top:12px;}
+.ol li{font-size:13px;color:var(--textd);padding:5px 0 5px 14px;border-left:1px solid var(--borderb);margin-bottom:4px;line-height:1.5;}
+.forsec{padding:0 52px 80px;}
+.fgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;margin-top:32px;}
+.fc{background:var(--panel);border:1px solid rgba(0,255,65,.08);padding:32px 28px;transition:background .2s;}
+.fc:hover{background:var(--panel2);border-color:var(--borderb);}
+.fct{font-family:var(--cond);font-size:16px;font-weight:700;color:var(--textb);text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px;}
+.fc p{font-size:13px;color:var(--textd);line-height:1.65;}
+.procsec{padding:80px 52px;border-top:1px solid rgba(0,255,65,.08);}
+.procsec h2{font-family:var(--disp);font-size:clamp(32px,4vw,52px);color:var(--textb);letter-spacing:.02em;}
+.steps{display:grid;grid-template-columns:repeat(3,1fr);margin-top:48px;position:relative;}
+.steps::before{content:'';position:absolute;top:40px;left:16.66%;right:16.66%;height:1px;background:linear-gradient(to right,var(--mg),var(--accent2),var(--mg));}
+.step{display:flex;flex-direction:column;align-items:center;text-align:center;padding:0 32px;position:relative;z-index:1;}
+.stepn{width:80px;height:80px;border:1px solid var(--borderb);background:var(--bg);display:flex;align-items:center;justify-content:center;font-family:var(--disp);font-size:36px;color:var(--mg);margin-bottom:24px;clip-path:polygon(50% 0%,100% 25%,100% 75%,50% 100%,0% 75%,0% 25%);transition:background .2s;}
+.step:hover .stepn{background:var(--adim);}
+.stepl{font-family:var(--cond);font-size:18px;font-weight:700;color:var(--textb);text-transform:uppercase;letter-spacing:.08em;margin-bottom:12px;}
+.step p{font-size:13px;color:var(--textd);line-height:1.65;}
+.csec{padding:80px 52px 120px;border-top:1px solid rgba(0,255,65,.08);}
+.cgrid{display:grid;grid-template-columns:1.2fr 1fr;gap:80px;align-items:center;}
+.cl h2{font-family:var(--disp);font-size:clamp(40px,5vw,72px);line-height:.92;color:var(--textb);letter-spacing:.02em;margin-bottom:24px;}
+.cl h2 span{color:var(--mg);}
+.cl p{font-size:15px;color:var(--textd);line-height:1.75;}
+.clinks{display:flex;flex-direction:column;gap:16px;margin-top:36px;}
+.clink{display:flex;align-items:center;gap:16px;padding:20px 24px;background:var(--panel);border:1px solid rgba(0,255,65,.08);text-decoration:none;cursor:none;transition:background .2s,border-color .2s,transform .15s;color:inherit;}
+.clink:hover{background:var(--panel2);border-color:var(--borderb);transform:translateX(6px);}
+.clink-i{font-size:20px;}
+.clink-l{font-family:var(--cond);font-size:13px;font-weight:600;letter-spacing:.15em;color:var(--textd);text-transform:uppercase;}
+.clink-v{font-family:var(--mono);font-size:13px;color:var(--mg);margin-left:auto;}
+footer{padding:28px 52px;border-top:1px solid rgba(0,255,65,.08);display:flex;justify-content:space-between;align-items:center;}
+footer p{font-family:var(--mono);font-size:10px;color:var(--textd);letter-spacing:.12em;}
+
+/* LINKEDIN BADGE */
+.li-badge-wrap{margin-top:32px;}
+.badge-base{border-radius:0 !important;background:var(--panel) !important;border:1px solid rgba(0,255,65,.12) !important;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(22px);}to{opacity:1;transform:translateY(0);}}
+@keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
+</style>
+<script src="https://platform.linkedin.com/badges/js/profile.js" async defer type="text/javascript"></script>
+</head>
+<body>
+<div id="cur"></div>
+<div id="cur-ring"></div>
+<canvas id="bgc"></canvas>
+<nav>
+  <div class="nav-logo">LD<span> / </span>PROJECT SYSTEMS</div>
+  <div class="nav-links">
+    <a href="#" class="active" data-page="home">Home</a>
+    <a href="#" data-page="work">Work</a>
+    <a href="#" data-page="consult">Consult</a>
+  </div>
+</nav>
+<div id="app">
+
+<!-- ═══ HOME ═══ -->
+<div id="home" class="page active">
+<section class="hero">
+  <div class="hero-tag">// Construction Systems Operator — Project Delivery, Technology &amp; Workflow Governance</div>
+  <h1>LUKE<span class="al">D'AMATO</span></h1>
+  <p class="hero-sub">I work inside project delivery — understanding how real construction work moves, seeing where the friction is, and building the operational systems, standards, automations, and visibility layers that make it cleaner, faster, and more repeatable.</p>
+  <div class="hero-ctas">
+    <button class="btn-p" onclick="goTo('work')">View My Work</button>
+    <button class="btn-s" onclick="goTo('consult')">Get In Touch</button>
+  </div>
+  <div class="hero-stats">
+    <div><div class="num">6+</div><div class="lbl">Operational Systems Built</div></div>
+    <div><div class="num">3+</div><div class="lbl">Years Procore Architecture</div></div>
+    <div><div class="num">M.S.</div><div class="lbl">Construction Management</div></div>
+    <div><div class="num">&#8734;</div><div class="lbl">Process Friction Eliminated</div></div>
+  </div>
+  <div class="hline"></div>
+</section>
+<div class="gdiv"></div>
+
+<!-- ABOUT -->
+<section class="section">
+  <div class="slabel">About</div>
+  <div class="about-grid">
+    <div class="about-text rev">
+      <h2>WHERE DELIVERY<br>MEETS SYSTEMS.</h2>
+      <p>I sit at the intersection of project delivery, construction technology, and workflow governance. My value is in taking fragmented field and office processes — the ones that slow teams down, create documentation gaps, and produce decisions based on incomplete information — and turning them into structured, repeatable systems.</p>
+      <p>That means understanding how work actually moves on a project: how things get named, routed, reviewed, logged, escalated, turned into decisions, and preserved for turnover and historical tracking. That is not admin work. That is operational infrastructure — and most construction companies are bad at it.</p>
+      <p>Academic background: B.S. Industrial Design, M.S. Construction Management. I think in systems, build for the field, and design for people who don't have time for tools that don't work.</p>
+      <div class="tags">
+        <span class="tag">Procore</span><span class="tag">OpenSpace</span><span class="tag">DroneDeploy</span>
+        <span class="tag">Python</span><span class="tag">Microsoft 365</span><span class="tag">Claude / Anthropic</span>
+        <span class="tag">Zapier</span><span class="tag">Airtable</span><span class="tag">SAGE 300</span>
+        <span class="tag">Workflow Architecture</span><span class="tag">Process Governance</span>
+      </div>
+    </div>
+    <div class="rev">
+      <div class="sp">
+        <div class="sh">// CURRENT STACK</div>
+        <div>PM Platform&nbsp;&nbsp;&nbsp;<span>Procore</span></div>
+        <div>Field Capture&nbsp;&nbsp;<span>OpenSpace</span></div>
+        <div>Aerial Docs&nbsp;&nbsp;&nbsp;<span>DroneDeploy</span></div>
+        <div>Scripting&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span>Python 3</span></div>
+        <div>Office Suite&nbsp;&nbsp;<span>M365 / Excel</span></div>
+        <div>AI Primary&nbsp;&nbsp;&nbsp;&nbsp;<span>Claude / Anthropic</span></div>
+        <div>Automation&nbsp;&nbsp;&nbsp;&nbsp;<span>Zapier / Airtable</span></div>
+        <div>Accounting&nbsp;&nbsp;&nbsp;&nbsp;<span>SAGE 300</span></div>
+        <div class="sdiv sh">// CREDENTIALS</div>
+        <div>M.S.&nbsp;&nbsp;<span>Construction Management</span></div>
+        <div>B.S.&nbsp;&nbsp;<span>Industrial Design</span></div>
+        <div class="sdiv sh">// DIRECTION</div>
+        <div style="color:var(--textb);font-size:11px;line-height:1.7;">Construction Technology Manager<br>Digital Project Delivery Manager<br>Project Systems Manager<br>PM Systems &amp; Automation Lead</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PILLARS -->
+<section class="psec">
+  <div class="slabel">Core Service Pillars</div>
+  <h2 style="font-family:var(--disp);font-size:clamp(32px,4vw,52px);color:var(--textb);letter-spacing:.02em;margin-bottom:40px;">WHAT I DO</h2>
+  <div class="togwrap rev">
+    <button class="tog active" onclick="switchP('con',this)">Construction Practice</button>
+    <button class="tog" onclick="switchP('ai',this)">Systems &amp; Technology</button>
+  </div>
+  <div id="pgcon" class="pgrid active">
+    <div class="pcard rev">
+      <div class="pnum">01</div><div class="picon">&#x1F4CB;</div>
+      <div class="ptitle">Preconstruction &amp; Procurement</div>
+      <p class="pdesc">Bid leveling, subcontractor scope gap analysis, pre-qualification, and buyout coordination. I build the structure that makes procurement decisions faster and better-documented — so the risk is visible before it's a problem.</p>
+    </div>
+    <div class="pcard rev">
+      <div class="pnum">02</div><div class="picon">&#x1F3D7;&#xFE0F;</div>
+      <div class="ptitle">Field Coordination &amp; Information Flow</div>
+      <p class="pdesc">Managing the pipeline between field crews, subcontractors, architects, and PMs — RFIs, submittals, change orders, and inspection tracking. The goal is zero lag between a question in the field and an answer in the record.</p>
+    </div>
+    <div class="pcard rev">
+      <div class="pnum">03</div><div class="picon">&#x1F4C2;</div>
+      <div class="ptitle">Process Governance &amp; Documentation Standards</div>
+      <p class="pdesc">Building the naming conventions, routing logic, SOPs, and documentation frameworks that make project records consistent, complete, and useful — not just filed. Systems that support turnover, audits, and decision-making.</p>
+    </div>
+  </div>
+  <div id="pgai" class="pgrid">
+    <div class="pcard rev">
+      <div class="pnum">04</div><div class="picon">&#x1F916;</div>
+      <div class="ptitle">Workflow Automation &amp; Agent Builds</div>
+      <p class="pdesc">Designing and deploying automation pipelines — email triggers, AI document processing, folder-to-system handoffs — that reduce manual entry and keep information moving without someone having to remember to push it.</p>
+    </div>
+    <div class="pcard rev">
+      <div class="pnum">05</div><div class="picon">&#x1F4CA;</div>
+      <div class="ptitle">Visibility Layers &amp; Operational Tracking</div>
+      <p class="pdesc">Building structured trackers tied to schedule dependencies, approval cycles, and material lead times — with logic like critical path flags and RAG status conditions. Turning workflows from reactive management into proactive systems.</p>
+    </div>
+    <div class="pcard rev">
+      <div class="pnum">06</div><div class="picon">&#x1F527;</div>
+      <div class="ptitle">Construction Technology Implementation</div>
+      <p class="pdesc">Configuring and connecting Procore, OpenSpace, DroneDeploy, and M365 into integrated field-to-office workflows. Platform adoption structured around how your project actually operates — not how the manual says it should.</p>
+    </div>
+  </div>
+</section>
+</div>
+
+<!-- ═══ WORK ═══ -->
+<div id="work" class="page">
+<div class="work-hero">
+  <div class="slabel">Work</div>
+  <h1>BUILT<br><span>IN THE</span><br>FIELD.</h1>
+</div>
+<div class="pgj">
+
+  <!-- AI EVOLUTION -->
+  <div class="pj wide rev" style="padding:48px 52px;">
+    <div class="pjn">00 — CURRENT PROJECT</div>
+    <div class="pjt" style="font-size:clamp(22px,3vw,32px);margin-bottom:16px;">AI Workflow Evolution</div>
+    <p class="pjd" style="max-width:760px;margin-bottom:36px;">A seven-phase operational evolution — from using AI as a task assistant to architecting end-to-end systems where data flows cleanly, decisions are faster, and teams operate with less friction. This is the progression that built the practitioner.</p>
+    <div class="pjtags" style="margin-bottom:36px;">
+      <span class="pjtag">Systems Design</span><span class="pjtag">Workflow Architecture</span>
+      <span class="pjtag">AI Integration</span><span class="pjtag">Process Engineering</span><span class="pjtag">Construction Operations</span>
+    </div>
+    <div class="evo-grid">
+      <div class="evo-card"><div class="evo-n">01</div><div class="evo-t">Awareness &amp; Experimentation</div><p class="evo-b">Started using AI for drafting, cleanup, and summarization. Focus was speed — not systems. Key realization: AI reduces friction only when inputs are structured.</p><div class="evo-s">Task assistant &#x2192; Repeatable outputs</div></div>
+      <div class="evo-card"><div class="evo-n">02</div><div class="evo-t">Standardization of Thinking</div><p class="evo-b">Built repeatable formats for meeting minutes, submittal naming, and RFI logic. Used AI to enforce consistent tone, standardized language, and clear categorization across project records.</p><div class="evo-s">Writing tool &#x2192; Logic engine</div></div>
+      <div class="evo-card"><div class="evo-n">03</div><div class="evo-t">Workflow Mapping</div><p class="evo-b">Broke internal operations into inputs &#x2192; actions &#x2192; outputs. Identified patterns across submittals, RFIs, and procurement. Started asking: where are delays created, what is repetitive vs. decision-based?</p><div class="evo-s">Ad-hoc process &#x2192; Visible system</div></div>
+      <div class="evo-card"><div class="evo-n">04</div><div class="evo-t">Data Structuring &amp; Tracking</div><p class="evo-b">Built Excel trackers tied to schedule dependencies, material lead times, and approval cycles. Introduced critical path flags, days-to-required-on-site, and RAG status conditions.</p><div class="evo-s">Workflow &#x2192; Measurable system</div></div>
+      <div class="evo-card"><div class="evo-n">05</div><div class="evo-t">Automation &amp; Integration</div><p class="evo-b">Designed pipelines: email &#x2192; folder &#x2192; trigger &#x2192; AI processing &#x2192; system update. Introduced event-based triggers, system-to-system communication, and controlled permissions for automation.</p><div class="evo-s">Reactive management &#x2192; Proactive systems</div></div>
+      <div class="evo-card"><div class="evo-n">06</div><div class="evo-t">Analytical Layer</div><p class="evo-b">AI used to analyze response times, identify approval delays, and surface risk before it impacts schedule. Built insights around which workflows consistently lag and where decisions stall progress.</p><div class="evo-s">Execution tool &#x2192; Decision support</div></div>
+      <div class="evo-card span-full">
+        <div class="evo-n" style="color:var(--amber);">07 — CURRENT</div>
+        <div class="evo-t" style="font-size:16px;">System Design Mindset</div>
+        <p class="evo-b" style="max-width:700px;">Designing end-to-end workflow systems — not improving individual steps. Core principles: clarity over complexity, structured inputs equal reliable outputs, automation should follow logic not replace it. The goal: environments where data flows cleanly, decisions are faster, and teams operate with less friction.</p>
+        <div class="evo-s" style="color:var(--amber);border-color:var(--amber);">Task efficiency &#x2192; Long-term operational leverage</div>
+      </div>
+    </div>
+    <div style="margin-top:36px;padding:24px 28px;background:var(--bg);border:1px solid var(--borderb);font-family:var(--mono);font-size:12px;color:var(--textd);line-height:1.8;max-width:680px;">
+      <div style="color:var(--mg);margin-bottom:8px;font-size:10px;letter-spacing:.2em;">// CORE CAPABILITY</div>
+      The distinguishing capability is not using AI — it is structuring work so AI can operate inside it. That means defining workflows clearly, standardizing inputs, building lightweight systems, and layering automation where it adds value without adding complexity.
+    </div>
+  </div>
+
+  <!-- TRANSCRIPT AGENT -->
+  <div class="pj feat rev">
+    <div>
+      <div class="pjn">01 — FEATURED</div>
+      <div class="pjt">Meeting Transcript Agent</div>
+      <p class="pjd">Meeting minutes in construction are consistently late, inconsistently formatted, and manually produced — creating project record gaps and PM overhead. I built a local Python agent that monitors a folder for incoming transcripts, parses the content, and automatically injects structured output into the OLSEN Excel meeting minutes template, mapped to specific cell addresses.</p>
+      <div class="pjtags"><span class="pjtag">Python 3</span><span class="pjtag">File Watch Automation</span><span class="pjtag">Excel / M365</span><span class="pjtag">Prompt Engineering</span><span class="pjtag">Agent Architecture</span></div>
+    </div>
+    <div>
+      <div class="pjo">Eliminates manual transcription and formatting — structured minutes from raw transcript in minutes, not hours.</div>
+      <div class="fbox"><div class="fh">// AGENT FLOW</div>
+        <div>1. Folder monitor detects new transcript</div>
+        <div>2. Agent parses by meeting categories</div>
+        <div>3. Structured JSON output generated</div>
+        <div>4. Injected into Excel cell map</div>
+        <div>5. Minutes ready for distribution</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="pj rev"><div class="pjn">02</div><div class="pjt">Procore Directory Gap Analysis</div><p class="pjd">Subcontractors with executed contracts but missing Procore directory entries create coordination breakdowns on active projects. Built a structured gap analysis tool that cross-references contract records against directory entries.</p><div class="pjtags"><span class="pjtag">Procore</span><span class="pjtag">Excel</span><span class="pjtag">Structured Logic</span><span class="pjtag">Data Analysis</span></div><div class="pjo">Immediate identification of directory gaps — preventing coordination failures before they affect project delivery.</div></div>
+
+  <div class="pj rev"><div class="pjn">03</div><div class="pjt">AI-Assisted Bid Leveling &amp; Scope Review</div><p class="pjd">Traditional bid leveling is time-intensive and reliant on the estimator's memory of scope. I integrated Claude into a structured workflow for rapid scope gap identification across subcontractor bids — surfacing inconsistencies in minutes.</p><div class="pjtags"><span class="pjtag">Claude / Anthropic</span><span class="pjtag">Prompt Engineering</span><span class="pjtag">Excel</span><span class="pjtag">Preconstruction</span></div><div class="pjo">Faster buyout decisions with higher scope confidence — AI flags gaps a manual review would miss under time pressure.</div></div>
+
+  <div class="pj rev"><div class="pjn">04</div><div class="pjt">Subcontractor Pre-Qualification System</div><p class="pjd">No structured process existed for evaluating subcontractor risk prior to invitation to bid. Built a structured intake and scoring packet with weighted criteria covering safety record, bonding capacity, financial health, and project experience.</p><div class="pjtags"><span class="pjtag">Excel</span><span class="pjtag">Procore</span><span class="pjtag">Preconstruction</span><span class="pjtag">Risk Management</span></div><div class="pjo">Standardized sub vetting with auditable scoring — reduces procurement risk at the source.</div></div>
+
+  <div class="pj rev"><div class="pjn">05</div><div class="pjt">QR Code Finish Tracking System</div><p class="pjd">Field finish status tracking relied on verbal updates and disconnected punch lists with no real-time visibility. Built an Excel-based QR code system linked to Procore, allowing field teams to scan space codes and update finish status directly to the project record.</p><div class="pjtags"><span class="pjtag">Excel / QR</span><span class="pjtag">Procore</span><span class="pjtag">Field Coordination</span><span class="pjtag">Closeout</span></div><div class="pjo">Real-time finish visibility from the field — dramatically reduces closeout coordination time.</div></div>
+
+  <div class="pj rev"><div class="pjn">06</div><div class="pjt">OpenSpace + DroneDeploy to Procore Pipeline</div><p class="pjd">Field documentation from 360-degree capture and aerial surveys existed in silos, disconnected from the Procore project record. Built a documentation pipeline that integrates both platforms directly into structured Procore records for each project phase.</p><div class="pjtags"><span class="pjtag">OpenSpace</span><span class="pjtag">DroneDeploy</span><span class="pjtag">Procore</span><span class="pjtag">Field Documentation</span></div><div class="pjo">Single-source field documentation — every site visit timestamped, geolocated, and linked to the project record.</div></div>
+
+</div>
+<div class="gdiv"></div>
+<section class="ssec">
+  <div class="slabel">Skills Matrix</div>
+  <h2>TECHNICAL<br>DEPTH</h2>
+  <div class="scols">
+    <div class="scol rev"><div class="scol-t">// Construction PM</div><div class="ski">RFIs &amp; Submittals</div><div class="ski">Change Order Management</div><div class="ski">Bid Leveling &amp; Buyout</div><div class="ski">Subcontractor Scope Review</div><div class="ski">Procurement Tracking</div><div class="ski">Field Coordination</div><div class="ski">Punch List &amp; Closeout</div><div class="ski">Owner &amp; Architect Liaison</div><div class="ski">Schedule Management</div><div class="ski">Superintendent Meetings</div></div>
+    <div class="scol rev"><div class="scol-t">// Technology Platforms</div><div class="ski">Procore (Full Suite)</div><div class="ski">Procore&#x2013;SAGE 300 Integration</div><div class="ski">OpenSpace 360 Capture</div><div class="ski">DroneDeploy Aerial Docs</div><div class="ski">Microsoft 365 / Excel</div><div class="ski">Zapier Automation</div><div class="ski">Airtable</div><div class="ski">Claude / Anthropic (Primary)</div><div class="ski">Python Scripting</div><div class="ski">M365 Pipeline Design</div></div>
+    <div class="scol rev"><div class="scol-t">// Systems &amp; Governance</div><div class="ski">Workflow Architecture</div><div class="ski">Process Mapping &amp; Audit</div><div class="ski">Agentic Pipeline Design</div><div class="ski">Naming Standards &amp; Conventions</div><div class="ski">Structured Data Extraction</div><div class="ski">Operational Tracking Systems</div><div class="ski">SOP Development</div><div class="ski">Technology Governance</div><div class="ski">Visibility Layer Design</div><div class="ski">Handoff Documentation</div></div>
+  </div>
+</section>
+</div>
+
+<!-- ═══ CONSULT ═══ -->
+<div id="consult" class="page">
+<div class="ch">
+  <div>
+    <div class="slabel">Consulting</div>
+    <h1>THE WORK<br>SHOULD<br><span>FLOW.</span></h1>
+  </div>
+  <div class="cht rev">
+    <p>Most construction firms have the same problem: the work is getting done, but the system around the work is broken. Naming is inconsistent. Routing is manual. Approvals stall. Documentation gaps show up at closeout. Decisions get made on incomplete information.</p>
+    <p>I come in at the process level — not to replace your team's judgment, but to build the operational infrastructure around it. Structured workflows, standardized formats, automation where it actually adds value, and visibility layers that surface what matters before it becomes a problem.</p>
+    <p>Engagements are scoped, contracted, and fully documented. You own everything when I leave.</p>
+    <div style="margin-top:36px;display:flex;gap:12px;"><button class="btn-p" onclick="document.querySelector('.csec').scrollIntoView({behavior:'smooth'})">Start a Conversation</button></div>
+  </div>
+</div>
+<div class="gdiv"></div>
+<section class="osec" style="padding-top:80px;">
+  <div class="slabel">What I Offer</div>
+  <div class="ogrid">
+    <div class="oc rev"><div class="oi">&#x1F50D;</div><div class="ot">Process Audit &amp; Workflow Mapping</div><ul class="ol"><li>Break down how work actually moves across your project — inputs, actions, outputs, handoffs</li><li>Identify where delays are created, where information gets lost, and where decisions stall</li><li>Separate repetitive execution work from decision-based work so automation targets the right layer</li><li>Delivered as a prioritized friction report with a clear systems roadmap</li></ul></div>
+    <div class="oc rev"><div class="oi">&#x2699;&#xFE0F;</div><div class="ot">Operational Systems &amp; Automation Builds</div><ul class="ol"><li>Custom workflows, naming standards, routing logic, and approval structures built for how your team works</li><li>Automation pipelines that reduce manual entry, eliminate duplicate work, and maintain clean data flow</li><li>Agent-based tools for document processing, meeting minutes, gap analysis, and structured reporting</li><li>Event-triggered systems that move information without waiting for someone to remember</li></ul></div>
+    <div class="oc rev"><div class="oi">&#x1F527;</div><div class="ot">Construction Technology Implementation</div><ul class="ol"><li>Procore setup, configuration, and team onboarding structured around your actual project workflows</li><li>OpenSpace and DroneDeploy deployment and Procore integration for complete field documentation pipelines</li><li>SAGE 300 sync and cost code architecture built for financial clarity, not just compliance</li><li>Platform consolidation — fewer tools, cleaner data, less friction between field and office</li></ul></div>
+    <div class="oc rev"><div class="oi">&#x1F4CB;</div><div class="ot">Standards, Governance &amp; Handoff</div><ul class="ol"><li>SOPs for every workflow I build so your team can run it, train on it, and improve it</li><li>Naming conventions, submittal structures, RFI logic, and documentation standards that stick</li><li>Technology governance policies covering AI tool use, data ownership, and retention</li><li>Full handoff documentation so nothing I build depends on me being there</li></ul></div>
+  </div>
+</section>
+<section class="forsec">
+  <div class="slabel">Who It's For</div>
+  <div class="fgrid">
+    <div class="fc rev"><div class="fct">Commercial GCs &amp; CMs</div><p>Firms where the work is getting done but the system around the work is broken. Inconsistent naming, manual routing, stalling approvals. I come in and fix the operational infrastructure so the project runs cleaner.</p></div>
+    <div class="fc rev"><div class="fct">Growing Construction Firms</div><p>Small-to-mid-size firms scaling up and adopting Procore for the first time. I build your workflows, standards, and data structures correctly from day one so they support growth instead of fighting it.</p></div>
+    <div class="fc rev"><div class="fct">Technology Adopters</div><p>Organizations bringing in new platforms — Procore, OpenSpace, DroneDeploy — who need someone who understands both the tool and the actual construction workflow it needs to support. Technology should follow the work.</p></div>
+  </div>
+</section>
+<section class="procsec">
+  <div class="slabel">Process</div>
+  <h2>HOW IT WORKS</h2>
+  <div class="steps">
+    <div class="step rev"><div class="stepn">1</div><div class="stepl">Map</div><p>I get inside how work actually moves on your project. I find where friction lives, where information disappears, and what is already being done that could be structured better.</p></div>
+    <div class="step rev"><div class="stepn">2</div><div class="stepl">Build</div><p>I design and implement the workflows, standards, automations, and visibility layers that fix the specific friction points identified — scoped precisely, built for your team, documented as I go.</p></div>
+    <div class="step rev"><div class="stepn">3</div><div class="stepl">Hand Off</div><p>Full deployment, team training, and complete SOPs. Everything I build is yours — the logic, the tools, the documentation. You do not need me there for it to keep working.</p></div>
+  </div>
+</section>
+<section class="csec">
+  <div class="cgrid">
+    <div class="cl rev"><h2>READY TO<br><span>CONNECT?</span></h2><p>Available for project-based engagements, workflow audits, and technology implementation. If your operation has friction you cannot quite name — or systems that technically work but create more work than they save — that is the conversation to start.</p></div>
+    <div class="rev">
+      <div class="li-badge-wrap">
+        <div class="badge-base LI-profile-badge" data-locale="en_US" data-size="medium" data-theme="dark" data-type="VERTICAL" data-vanity="digitaldirt" data-version="v1"><a class="badge-base__link LI-simple-link" href="https://www.linkedin.com/in/digitaldirt?trk=profile-badge">Luke D'Amato</a></div>
+      </div>
+      <div class="clinks" style="margin-top:16px;">
+        <a href="mailto:lukedigitaldirt@gmail.com" class="clink"><div class="clink-i">&#x2709;&#xFE0F;</div><div class="clink-l">Email</div><div class="clink-v">lukedigitaldirt@gmail.com</div></a>
+        <a href="https://www.linkedin.com/in/digitaldirt" target="_blank" class="clink"><div class="clink-i">&#x1F4C4;</div><div class="clink-l">Full Resume</div><div class="clink-v">View on LinkedIn &#x2192;</div></a>
+      </div>
+    </div>
+  </div>
+</section>
+<footer>
+  <p>&#169; 2025 Luke D'Amato &#x2014; Construction Systems &amp; Project Technology</p>
+  <p style="color:var(--mg);opacity:.45;">OLSEN Construction Services / Connecticut</p>
+</footer>
+</div>
+
+</div>
+<script>
+(function() {
+"use strict";
+
+// ── CURSOR ──────────────────────────────────────────────
+var cur = document.getElementById('cur');
+var ring = document.getElementById('cur-ring');
+var mx = window.innerWidth / 2;
+var my = window.innerHeight / 2;
+var rx = mx; var ry = my;
+
+document.addEventListener('mousemove', function(e) { mx = e.clientX; my = e.clientY; });
+
+var hoverable = 'a, button';
+document.querySelectorAll(hoverable).forEach(function(el) {
+  el.addEventListener('mouseenter', function() { document.body.classList.add('link-hover'); });
+  el.addEventListener('mouseleave', function() { document.body.classList.remove('link-hover'); });
+});
+
+function animCursor() {
+  cur.style.left = mx + 'px';
+  cur.style.top = my + 'px';
+  rx += (mx - rx) * 0.12;
+  ry += (my - ry) * 0.12;
+  ring.style.left = rx + 'px';
+  ring.style.top = ry + 'px';
+  requestAnimationFrame(animCursor);
+}
+animCursor();
+
+// ── CANVAS — MAGENTA NEURAL FIBER NETWORK ───────────────
+var canvas = document.getElementById('bgc');
+var ctx = canvas.getContext('2d');
+var W = 0; var H = 0;
+var mouseX = -999; var mouseY = -999; var mouseActive = false;
+var ripples = [];
+var nodes = [];
+var frame = 0;
+
+function resize() {
+  W = canvas.width = window.innerWidth;
+  H = canvas.height = window.innerHeight;
+}
+resize();
+window.addEventListener('resize', resize);
+
+document.addEventListener('mousemove', function(e) {
+  mouseX = e.clientX; mouseY = e.clientY; mouseActive = true;
+});
+document.addEventListener('mouseleave', function() { mouseActive = false; });
+
+document.addEventListener('click', function(e) {
+  ripples.push({ x: e.clientX, y: e.clientY, r: 0, maxR: Math.max(W, H) * 0.7, str: 1.0, born: performance.now() });
+});
+
+// Init nodes
+for (var i = 0; i < 100; i++) {
+  var edge = Math.random() < 0.3;
+  var nx, ny;
+  if (edge) {
+    var side = Math.floor(Math.random() * 4);
+    if (side === 0) { nx = Math.random() * window.innerWidth; ny = Math.random() * 100; }
+    else if (side === 1) { nx = Math.random() * window.innerWidth; ny = window.innerHeight - Math.random() * 100; }
+    else if (side === 2) { nx = Math.random() * 140; ny = Math.random() * window.innerHeight; }
+    else { nx = window.innerWidth - Math.random() * 140; ny = Math.random() * window.innerHeight; }
+  } else {
+    nx = Math.random() * window.innerWidth;
+    ny = Math.random() * window.innerHeight;
+  }
+  nodes.push({ x: nx, y: ny, vx: (Math.random() - 0.5) * 0.3, vy: (Math.random() - 0.5) * 0.3, r: Math.random() * 1.2 + 0.4, phase: Math.random() * Math.PI * 2, boost: 0 });
+}
+
+function draw(ts) {
+  frame++;
+  ctx.clearRect(0, 0, W, H);
+
+  // Update ripples
+  for (var ri = ripples.length - 1; ri >= 0; ri--) {
+    var rp = ripples[ri];
+    var age = (ts - rp.born) / 1000;
+    rp.r = rp.maxR * (1 - Math.exp(-age * 1.6));
+    rp.str = Math.max(0, 1 - age / 2.0);
+    if (rp.str <= 0) ripples.splice(ri, 1);
+  }
+
+  // Update nodes
+  for (var ni = 0; ni < nodes.length; ni++) {
+    var n = nodes[ni];
+
+    // Organic drift
+    n.vx += Math.sin(frame * 0.007 + n.phase) * 0.003;
+    n.vy += Math.cos(frame * 0.009 + n.phase * 1.3) * 0.003;
+
+    // Cursor attraction
+    if (mouseActive) {
+      var cdx = mouseX - n.x; var cdy = mouseY - n.y;
+      var cd = Math.sqrt(cdx * cdx + cdy * cdy);
+      if (cd < 200 && cd > 0) {
+        var pull = (200 - cd) / 200;
+        n.vx += (cdx / cd) * pull * 0.05;
+        n.vy += (cdy / cd) * pull * 0.05;
+      }
+    }
+
+    // Ripple interaction
+    for (var rj = 0; rj < ripples.length; rj++) {
+      var rp2 = ripples[rj];
+      var rdx = n.x - rp2.x; var rdy = n.y - rp2.y;
+      var rd = Math.sqrt(rdx * rdx + rdy * rdy);
+      var band = 90;
+      var distToFront = Math.abs(rd - rp2.r);
+      if (distToFront < band) {
+        var intensity = (1 - distToFront / band) * rp2.str;
+        if (rd > 0) { n.vx -= (rdx / rd) * intensity * 0.9; n.vy -= (rdy / rd) * intensity * 0.9; }
+        n.boost = Math.max(n.boost, intensity * 0.85);
+      }
+    }
+
+    n.boost = Math.max(0, n.boost * 0.97);
+    n.vx *= 0.984; n.vy *= 0.984;
+
+    // Speed cap
+    var spd = Math.sqrt(n.vx * n.vx + n.vy * n.vy);
+    if (spd > 2.0) { n.vx = n.vx / spd * 2.0; n.vy = n.vy / spd * 2.0; }
+
+    n.x += n.vx; n.y += n.vy;
+    if (n.x < 0) { n.x = 0; n.vx *= -0.5; }
+    if (n.x > W) { n.x = W; n.vx *= -0.5; }
+    if (n.y < 0) { n.y = 0; n.vy *= -0.5; }
+    if (n.y > H) { n.y = H; n.vy *= -0.5; }
+  }
+
+  // Draw fibers
+  for (var ai = 0; ai < nodes.length; ai++) {
+    for (var bi = ai + 1; bi < nodes.length; bi++) {
+      var a = nodes[ai]; var b = nodes[bi];
+      var fdx = a.x - b.x; var fdy = a.y - b.y;
+      var fd = Math.sqrt(fdx * fdx + fdy * fdy);
+      var boost = Math.max(a.boost, b.boost);
+      var range = 140 + boost * 110;
+      if (fd < range) {
+        var midX = (a.x + b.x) * 0.5; var midY = (a.y + b.y) * 0.5;
+        var mdx = mouseX - midX; var mdy = mouseY - midY;
+        var md = Math.sqrt(mdx * mdx + mdy * mdy);
+        var mg2 = mouseActive && md < 220 ? (1 - md / 220) * 0.65 : 0;
+        var prox = 1 - fd / range;
+        var alpha = prox * (0.1 + mg2 * 0.38 + boost * 0.55);
+        var lw = prox * (0.4 + mg2 * 1.1 + boost * 2.0);
+        var cr = Math.floor(180 + mg2 * 75 + boost * 50);
+        var cg = Math.floor(mg2 * 20 + boost * 10);
+        var cb = Math.floor(150 + mg2 * 50 + boost * 30);
+        var cpx = midX + Math.sin(a.phase + frame * 0.003) * 10;
+        var cpy = midY + Math.cos(b.phase + frame * 0.004) * 10;
+        ctx.strokeStyle = 'rgba(' + cr + ',' + cg + ',' + cb + ',' + Math.min(alpha, 0.88) + ')';
+        ctx.lineWidth = Math.max(0.1, Math.min(lw, 3.2));
+        ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.quadraticCurveTo(cpx, cpy, b.x, b.y); ctx.stroke();
+        if (prox > 0.58 || boost > 0.25) {
+          ctx.strokeStyle = 'rgba(255,' + Math.floor(cg * 1.4) + ',' + Math.floor(cb * 1.1) + ',' + ((prox - 0.35) * 0.35 + boost * 0.28) + ')';
+          ctx.lineWidth = Math.max(0.1, lw * 0.35);
+          ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.quadraticCurveTo(cpx, cpy, b.x, b.y); ctx.stroke();
+        }
+      }
+    }
+  }
+
+  // Draw nodes
+  for (var ni2 = 0; ni2 < nodes.length; ni2++) {
+    var nd = nodes[ni2];
+    var nmdx = mouseX - nd.x; var nmdy = mouseY - nd.y;
+    var nmd = Math.sqrt(nmdx * nmdx + nmdy * nmdy);
+    var nmp = mouseActive && nmd < 190 ? (1 - nmd / 190) : 0;
+    var ng = Math.max(0, nmp + nd.boost);
+    var nr2 = Math.max(0.5, nd.r + ng * 3.2);
+    var nnr = Math.floor(220 + ng * 35);
+    var nng = Math.floor(ng * 40);
+    var nnb = Math.floor(170 + ng * 40);
+    if (ng > 0.12) {
+      var grad = ctx.createRadialGradient(nd.x, nd.y, 0, nd.x, nd.y, Math.max(0.1, nr2 * 5.5));
+      grad.addColorStop(0, 'rgba(' + nnr + ',' + nng + ',' + nnb + ',' + ng * 0.16 + ')');
+      grad.addColorStop(1, 'rgba(' + nnr + ',' + nng + ',' + nnb + ',0)');
+      ctx.fillStyle = grad;
+      ctx.beginPath(); ctx.arc(nd.x, nd.y, Math.max(0.1, nr2 * 5.5), 0, Math.PI * 2); ctx.fill();
+    }
+    ctx.beginPath(); ctx.arc(nd.x, nd.y, Math.max(0.1, nr2), 0, Math.PI * 2);
+    ctx.fillStyle = 'rgba(' + nnr + ',' + nng + ',' + nnb + ',' + (0.22 + ng * 0.6) + ')';
+    ctx.fill();
+  }
+
+  // Draw ripple rings
+  for (var rk = 0; rk < ripples.length; rk++) {
+    var rp3 = ripples[rk];
+    if (rp3.str > 0.02) {
+      ctx.beginPath(); ctx.arc(rp3.x, rp3.y, Math.max(0.1, rp3.r), 0, Math.PI * 2);
+      ctx.strokeStyle = 'rgba(255,0,180,' + rp3.str * 0.2 + ')';
+      ctx.lineWidth = Math.max(0.1, 2 + rp3.str * 4); ctx.stroke();
+      if (rp3.r > 25) {
+        ctx.beginPath(); ctx.arc(rp3.x, rp3.y, Math.max(0.1, rp3.r * 0.55), 0, Math.PI * 2);
+        ctx.strokeStyle = 'rgba(255,80,200,' + rp3.str * 0.1 + ')';
+        ctx.lineWidth = 1; ctx.stroke();
+      }
+    }
+  }
+
+  requestAnimationFrame(draw);
+}
+requestAnimationFrame(draw);
+
+// ── NAV ─────────────────────────────────────────────────
+function goTo(id) {
+  document.querySelectorAll('.page').forEach(function(p) { p.classList.remove('active'); });
+  document.querySelectorAll('.nav-links a').forEach(function(a) { a.classList.remove('active'); });
+  document.getElementById(id).classList.add('active');
+  var link = document.querySelector('[data-page="' + id + '"]');
+  if (link) link.classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  setTimeout(revAll, 150);
+}
+window.goTo = goTo;
+
+document.querySelectorAll('.nav-links a').forEach(function(a) {
+  a.addEventListener('click', function(e) { e.preventDefault(); goTo(a.dataset.page); });
+});
+
+// ── PILLAR TOGGLE ────────────────────────────────────────
+function switchP(t, btn) {
+  document.querySelectorAll('.pgrid').forEach(function(g) { g.classList.remove('active'); });
+  document.querySelectorAll('.tog').forEach(function(b) { b.classList.remove('active'); });
+  document.getElementById('pg' + t).classList.add('active');
+  btn.classList.add('active');
+}
+window.switchP = switchP;
+
+// ── SCROLL REVEAL ────────────────────────────────────────
+function revAll() {
+  var els = document.querySelectorAll('.rev:not(.vis)');
+  if (!els.length) return;
+  var io = new IntersectionObserver(function(entries) {
+    entries.forEach(function(e, i) {
+      if (e.isIntersecting) {
+        setTimeout(function() { e.target.classList.add('vis'); }, i * 75);
+        io.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.08 });
+  els.forEach(function(el) { io.observe(el); });
+}
+revAll();
+
+})();
+</script>
+</body>
+</html>

@@ -32,7 +32,6 @@ body.link-hover #cur{width:20px;height:20px;background:var(--amber);}
 body.link-hover #cur-ring{width:54px;height:54px;border-color:var(--amber);}
 
 /* CANVAS */
-#bgc{position:fixed;inset:0;z-index:0;pointer-events:none;}
 
 /* SCANLINES */
 body::after{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.035) 2px,rgba(0,0,0,.035) 4px);pointer-events:none;z-index:500;}
@@ -191,6 +190,9 @@ footer p{font-family:var(--mono);font-size:10px;color:var(--textd);letter-spacin
 /* LINKEDIN BADGE */
 .li-badge-wrap{margin-top:32px;}
 .badge-base{border-radius:0 !important;background:var(--panel) !important;border:1px solid rgba(0,255,65,.12) !important;}
+
+/* NEURAL CANVAS */
+#nc{position:fixed;inset:0;z-index:0;pointer-events:none;}
 @keyframes fadeUp{from{opacity:0;transform:translateY(22px);}to{opacity:1;transform:translateY(0);}}
 @keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
 </style>
@@ -199,7 +201,7 @@ footer p{font-family:var(--mono);font-size:10px;color:var(--textd);letter-spacin
 <body>
 <div id="cur"></div>
 <div id="cur-ring"></div>
-<canvas id="bgc"></canvas>
+<canvas id="nc"></canvas>
 <nav>
   <div class="nav-logo">LD<span> / </span>PROJECT SYSTEMS</div>
   <div class="nav-links">
@@ -441,7 +443,7 @@ footer p{font-family:var(--mono);font-size:10px;color:var(--textd);letter-spacin
         <div class="badge-base LI-profile-badge" data-locale="en_US" data-size="medium" data-theme="dark" data-type="VERTICAL" data-vanity="digitaldirt" data-version="v1"><a class="badge-base__link LI-simple-link" href="https://www.linkedin.com/in/digitaldirt?trk=profile-badge">Luke D'Amato</a></div>
       </div>
       <div class="clinks" style="margin-top:16px;">
-        <a href="mailto:lukedigitaldirt@gmail.com" class="clink"><div class="clink-i">&#x2709;&#xFE0F;</div><div class="clink-l">Email</div><div class="clink-v">lukedigitaldirt@gmail.com</div></a>
+        <a href="/cdn-cgi/l/email-protection#600c150b050409070914010c0409121420070d01090c4e030f0d" class="clink"><div class="clink-i">&#x2709;&#xFE0F;</div><div class="clink-l">Email</div><div class="clink-v"><span class="__cf_email__" data-cfemail="95f9e0fef0f1fcf2fce1f4f9f1fce7e1d5f2f8f4fcf9bbf6faf8">[email&#160;protected]</span></div></a>
         <a href="https://www.linkedin.com/in/digitaldirt" target="_blank" class="clink"><div class="clink-i">&#x1F4C4;</div><div class="clink-l">Full Resume</div><div class="clink-v">View on LinkedIn &#x2192;</div></a>
       </div>
     </div>
@@ -455,253 +457,270 @@ footer p{font-family:var(--mono);font-size:10px;color:var(--textd);letter-spacin
 
 </div>
 <script>
-(function() {
+(function(){
 "use strict";
 
-// ── CURSOR ──────────────────────────────────────────────
-var cur = document.getElementById('cur');
-var ring = document.getElementById('cur-ring');
-var mx = window.innerWidth / 2;
-var my = window.innerHeight / 2;
-var rx = mx; var ry = my;
-
-document.addEventListener('mousemove', function(e) { mx = e.clientX; my = e.clientY; });
-
-var hoverable = 'a, button';
-document.querySelectorAll(hoverable).forEach(function(el) {
-  el.addEventListener('mouseenter', function() { document.body.classList.add('link-hover'); });
-  el.addEventListener('mouseleave', function() { document.body.classList.remove('link-hover'); });
+// ── CURSOR ──
+var cur=document.getElementById('cur'),ring=document.getElementById('cur-ring');
+var mx=window.innerWidth/2,my=window.innerHeight/2,rx=mx,ry=my;
+document.addEventListener('mousemove',function(e){mx=e.clientX;my=e.clientY;});
+document.querySelectorAll('a,button').forEach(function(el){
+  el.addEventListener('mouseenter',function(){document.body.classList.add('link-hover');});
+  el.addEventListener('mouseleave',function(){document.body.classList.remove('link-hover');});
 });
+(function ac(){
+  cur.style.left=mx+'px';cur.style.top=my+'px';
+  rx+=(mx-rx)*.12;ry+=(my-ry)*.12;
+  ring.style.left=rx+'px';ring.style.top=ry+'px';
+  requestAnimationFrame(ac);
+})();
 
-function animCursor() {
-  cur.style.left = mx + 'px';
-  cur.style.top = my + 'px';
-  rx += (mx - rx) * 0.12;
-  ry += (my - ry) * 0.12;
-  ring.style.left = rx + 'px';
-  ring.style.top = ry + 'px';
-  requestAnimationFrame(animCursor);
-}
-animCursor();
-
-// ── CANVAS — MAGENTA NEURAL FIBER NETWORK ───────────────
-var canvas = document.getElementById('bgc');
-var ctx = canvas.getContext('2d');
-var W = 0; var H = 0;
-var mouseX = -999; var mouseY = -999; var mouseActive = false;
-var ripples = [];
-var nodes = [];
-var frame = 0;
-
-function resize() {
-  W = canvas.width = window.innerWidth;
-  H = canvas.height = window.innerHeight;
-}
+// ── NEURAL STRING NETWORK ──
+var nc=document.getElementById('nc');
+var ctx=nc.getContext('2d');
+var W=0,H=0;
+function resize(){W=nc.width=window.innerWidth;H=nc.height=window.innerHeight;}
 resize();
-window.addEventListener('resize', resize);
+window.addEventListener('resize',resize);
 
-document.addEventListener('mousemove', function(e) {
-  mouseX = e.clientX; mouseY = e.clientY; mouseActive = true;
-});
-document.addEventListener('mouseleave', function() { mouseActive = false; });
+// Each string is a chain of control points that undulate organically
+var STRING_COUNT=22;
+var strings=[];
+var mouseX=-9999,mouseY=-9999,mouseActive=false;
 
-document.addEventListener('click', function(e) {
-  ripples.push({ x: e.clientX, y: e.clientY, r: 0, maxR: Math.max(W, H) * 0.7, str: 1.0, born: performance.now() });
-});
+document.addEventListener('mousemove',function(e){mouseX=e.clientX;mouseY=e.clientY;mouseActive=true;});
+document.addEventListener('mouseleave',function(){mouseActive=false;});
 
-// Init nodes
-for (var i = 0; i < 100; i++) {
-  var edge = Math.random() < 0.3;
-  var nx, ny;
-  if (edge) {
-    var side = Math.floor(Math.random() * 4);
-    if (side === 0) { nx = Math.random() * window.innerWidth; ny = Math.random() * 100; }
-    else if (side === 1) { nx = Math.random() * window.innerWidth; ny = window.innerHeight - Math.random() * 100; }
-    else if (side === 2) { nx = Math.random() * 140; ny = Math.random() * window.innerHeight; }
-    else { nx = window.innerWidth - Math.random() * 140; ny = Math.random() * window.innerHeight; }
-  } else {
-    nx = Math.random() * window.innerWidth;
-    ny = Math.random() * window.innerHeight;
+// Click pulses — each stores origin, age, and which string indices are activated
+var pulses=[];
+document.addEventListener('click',function(e){
+  pulses.push({x:e.clientX,y:e.clientY,born:performance.now(),r:0,maxR:Math.min(W,H)*.65});
+  // Activate nearby strings
+  for(var i=0;i<strings.length;i++){
+    var s=strings[i];
+    var dist=distToString(s,e.clientX,e.clientY);
+    if(dist<220){
+      s.activation=Math.max(s.activation,1.0-dist/220);
+      s.pulsePhase=0;
+    }
   }
-  nodes.push({ x: nx, y: ny, vx: (Math.random() - 0.5) * 0.3, vy: (Math.random() - 0.5) * 0.3, r: Math.random() * 1.2 + 0.4, phase: Math.random() * Math.PI * 2, boost: 0 });
+});
+
+function distToString(s,px,py){
+  var minD=Infinity;
+  for(var i=0;i<s.pts.length;i++){
+    var pt=s.pts[i];
+    var d=Math.sqrt((pt.x-px)*(pt.x-px)+(pt.y-py)*(pt.y-py));
+    if(d<minD)minD=d;
+  }
+  return minD;
 }
 
-function draw(ts) {
+// Build strings — each is a flowing sinusoidal thread with organic noise
+function makeString(idx){
+  // Strings either run horizontally, diagonally, or at gentle angles
+  var PTS=18+Math.floor(Math.random()*8);
+  var pts=[];
+  // Random orientation: 0=H, 1=V, 2=diagonal
+  var orient=idx%3;
+  var startX,startY,endX,endY;
+  if(orient===0){
+    startX=Math.random()*W*.3-W*.1;
+    startY=Math.random()*H;
+    endX=startX+W*.7+Math.random()*W*.5;
+    endY=startY+(Math.random()-.5)*H*.3;
+  } else if(orient===1){
+    startX=Math.random()*W;
+    startY=Math.random()*H*.2-H*.05;
+    endX=startX+(Math.random()-.5)*W*.3;
+    endY=startY+H*.7+Math.random()*H*.4;
+  } else {
+    startX=Math.random()<.5?-W*.05:W*.8+Math.random()*W*.25;
+    startY=Math.random()*H;
+    endX=startX+(startX<0?W*1.1:-W*1.1);
+    endY=startY+(Math.random()-.5)*H*.6;
+  }
+  for(var i=0;i<PTS;i++){
+    var t=i/(PTS-1);
+    pts.push({
+      x:startX+(endX-startX)*t,
+      y:startY+(endY-startY)*t,
+      ox:startX+(endX-startX)*t,
+      oy:startY+(endY-startY)*t,
+      phase:Math.random()*Math.PI*2,
+      amp:12+Math.random()*22,
+      freq:0.6+Math.random()*1.2,
+      vx:0,vy:0
+    });
+  }
+  return {
+    pts:pts,
+    speed:0.18+Math.random()*0.28,
+    activation:0,       // 0=blue, 1=magenta burst
+    pulsePhase:0,
+    thickness:0.5+Math.random()*1.0,
+    baseAlpha:0.08+Math.random()*0.13
+  };
+}
+
+for(var i=0;i<STRING_COUNT;i++) strings.push(makeString(i));
+
+var frame=0,lastTs=0;
+
+function draw(ts){
   frame++;
-  ctx.clearRect(0, 0, W, H);
+  var dt=Math.min(50,(ts-lastTs))/1000;lastTs=ts;
+  ctx.clearRect(0,0,W,H);
 
-  // Update ripples
-  for (var ri = ripples.length - 1; ri >= 0; ri--) {
-    var rp = ripples[ri];
-    var age = (ts - rp.born) / 1000;
-    rp.r = rp.maxR * (1 - Math.exp(-age * 1.6));
-    rp.str = Math.max(0, 1 - age / 2.0);
-    if (rp.str <= 0) ripples.splice(ri, 1);
+  // Update pulses
+  for(var pi=pulses.length-1;pi>=0;pi--){
+    var p=pulses[pi];
+    var age=(ts-p.born)/1000;
+    p.r=p.maxR*(1-Math.exp(-age*2.2));
+    if(age>1.8)pulses.splice(pi,1);
   }
 
-  // Update nodes
-  for (var ni = 0; ni < nodes.length; ni++) {
-    var n = nodes[ni];
+  // Update and draw each string
+  for(var si=0;si<strings.length;si++){
+    var s=strings[si];
 
-    // Organic drift
-    n.vx += Math.sin(frame * 0.007 + n.phase) * 0.003;
-    n.vy += Math.cos(frame * 0.009 + n.phase * 1.3) * 0.003;
+    // Decay activation
+    s.activation=Math.max(0,s.activation-dt*0.65);
+    s.pulsePhase+=dt*3.0;
 
-    // Cursor attraction
-    if (mouseActive) {
-      var cdx = mouseX - n.x; var cdy = mouseY - n.y;
-      var cd = Math.sqrt(cdx * cdx + cdy * cdy);
-      if (cd < 200 && cd > 0) {
-        var pull = (200 - cd) / 200;
-        n.vx += (cdx / cd) * pull * 0.05;
-        n.vy += (cdy / cd) * pull * 0.05;
-      }
-    }
+    var pts=s.pts;
+    for(var pi2=0;pi2<pts.length;pi2++){
+      var pt=pts[pi2];
+      var t=pi2/(pts.length-1);
 
-    // Ripple interaction
-    for (var rj = 0; rj < ripples.length; rj++) {
-      var rp2 = ripples[rj];
-      var rdx = n.x - rp2.x; var rdy = n.y - rp2.y;
-      var rd = Math.sqrt(rdx * rdx + rdy * rdy);
-      var band = 90;
-      var distToFront = Math.abs(rd - rp2.r);
-      if (distToFront < band) {
-        var intensity = (1 - distToFront / band) * rp2.str;
-        if (rd > 0) { n.vx -= (rdx / rd) * intensity * 0.9; n.vy -= (rdy / rd) * intensity * 0.9; }
-        n.boost = Math.max(n.boost, intensity * 0.85);
-      }
-    }
+      // Organic undulation from origin
+      var wave=Math.sin(frame*0.012*s.speed+pt.phase+t*Math.PI*2.5)*pt.amp
+              +Math.sin(frame*0.021*s.speed+pt.phase*1.7+t*Math.PI*4.1)*pt.amp*.4;
+      var wavePerpX=-Math.sin(t*Math.PI),wavePerpY=Math.cos(t*Math.PI);
+      var nx=pt.ox+wavePerpX*wave;
+      var ny=pt.oy+wavePerpY*wave;
 
-    n.boost = Math.max(0, n.boost * 0.97);
-    n.vx *= 0.984; n.vy *= 0.984;
-
-    // Speed cap
-    var spd = Math.sqrt(n.vx * n.vx + n.vy * n.vy);
-    if (spd > 2.0) { n.vx = n.vx / spd * 2.0; n.vy = n.vy / spd * 2.0; }
-
-    n.x += n.vx; n.y += n.vy;
-    if (n.x < 0) { n.x = 0; n.vx *= -0.5; }
-    if (n.x > W) { n.x = W; n.vx *= -0.5; }
-    if (n.y < 0) { n.y = 0; n.vy *= -0.5; }
-    if (n.y > H) { n.y = H; n.vy *= -0.5; }
-  }
-
-  // Draw fibers
-  for (var ai = 0; ai < nodes.length; ai++) {
-    for (var bi = ai + 1; bi < nodes.length; bi++) {
-      var a = nodes[ai]; var b = nodes[bi];
-      var fdx = a.x - b.x; var fdy = a.y - b.y;
-      var fd = Math.sqrt(fdx * fdx + fdy * fdy);
-      var boost = Math.max(a.boost, b.boost);
-      var range = 140 + boost * 110;
-      if (fd < range) {
-        var midX = (a.x + b.x) * 0.5; var midY = (a.y + b.y) * 0.5;
-        var mdx = mouseX - midX; var mdy = mouseY - midY;
-        var md = Math.sqrt(mdx * mdx + mdy * mdy);
-        var mg2 = mouseActive && md < 220 ? (1 - md / 220) * 0.65 : 0;
-        var prox = 1 - fd / range;
-        var alpha = prox * (0.1 + mg2 * 0.38 + boost * 0.55);
-        var lw = prox * (0.4 + mg2 * 1.1 + boost * 2.0);
-        var cr = Math.floor(180 + mg2 * 75 + boost * 50);
-        var cg = Math.floor(mg2 * 20 + boost * 10);
-        var cb = Math.floor(150 + mg2 * 50 + boost * 30);
-        var cpx = midX + Math.sin(a.phase + frame * 0.003) * 10;
-        var cpy = midY + Math.cos(b.phase + frame * 0.004) * 10;
-        ctx.strokeStyle = 'rgba(' + cr + ',' + cg + ',' + cb + ',' + Math.min(alpha, 0.88) + ')';
-        ctx.lineWidth = Math.max(0.1, Math.min(lw, 3.2));
-        ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.quadraticCurveTo(cpx, cpy, b.x, b.y); ctx.stroke();
-        if (prox > 0.58 || boost > 0.25) {
-          ctx.strokeStyle = 'rgba(255,' + Math.floor(cg * 1.4) + ',' + Math.floor(cb * 1.1) + ',' + ((prox - 0.35) * 0.35 + boost * 0.28) + ')';
-          ctx.lineWidth = Math.max(0.1, lw * 0.35);
-          ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.quadraticCurveTo(cpx, cpy, b.x, b.y); ctx.stroke();
+      // Pulse distortion — organic, not circular
+      for(var pp=0;pp<pulses.length;pp++){
+        var pls=pulses[pp];
+        var pdx=pt.ox-pls.x,pdy=pt.oy-pls.y;
+        var pd=Math.sqrt(pdx*pdx+pdy*pdy);
+        var age2=(ts-pls.born)/1000;
+        var wavefront=pls.r;
+        var band=70+si*5; // irregular band per string = organic feel
+        var distToFront=Math.abs(pd-wavefront);
+        if(distToFront<band&&pd>0){
+          var strength=(1-distToFront/band)*(1-age2/1.8);
+          // Irregular displacement — each point perturbed differently
+          var angle=Math.atan2(pdy,pdx)+Math.sin(pi2*.7+s.speed)*0.9;
+          nx+=Math.cos(angle)*strength*28;
+          ny+=Math.sin(angle)*strength*28;
         }
       }
-    }
-  }
 
-  // Draw nodes
-  for (var ni2 = 0; ni2 < nodes.length; ni2++) {
-    var nd = nodes[ni2];
-    var nmdx = mouseX - nd.x; var nmdy = mouseY - nd.y;
-    var nmd = Math.sqrt(nmdx * nmdx + nmdy * nmdy);
-    var nmp = mouseActive && nmd < 190 ? (1 - nmd / 190) : 0;
-    var ng = Math.max(0, nmp + nd.boost);
-    var nr2 = Math.max(0.5, nd.r + ng * 3.2);
-    var nnr = Math.floor(220 + ng * 35);
-    var nng = Math.floor(ng * 40);
-    var nnb = Math.floor(170 + ng * 40);
-    if (ng > 0.12) {
-      var grad = ctx.createRadialGradient(nd.x, nd.y, 0, nd.x, nd.y, Math.max(0.1, nr2 * 5.5));
-      grad.addColorStop(0, 'rgba(' + nnr + ',' + nng + ',' + nnb + ',' + ng * 0.16 + ')');
-      grad.addColorStop(1, 'rgba(' + nnr + ',' + nng + ',' + nnb + ',0)');
-      ctx.fillStyle = grad;
-      ctx.beginPath(); ctx.arc(nd.x, nd.y, Math.max(0.1, nr2 * 5.5), 0, Math.PI * 2); ctx.fill();
-    }
-    ctx.beginPath(); ctx.arc(nd.x, nd.y, Math.max(0.1, nr2), 0, Math.PI * 2);
-    ctx.fillStyle = 'rgba(' + nnr + ',' + nng + ',' + nnb + ',' + (0.22 + ng * 0.6) + ')';
-    ctx.fill();
-  }
-
-  // Draw ripple rings
-  for (var rk = 0; rk < ripples.length; rk++) {
-    var rp3 = ripples[rk];
-    if (rp3.str > 0.02) {
-      ctx.beginPath(); ctx.arc(rp3.x, rp3.y, Math.max(0.1, rp3.r), 0, Math.PI * 2);
-      ctx.strokeStyle = 'rgba(255,0,180,' + rp3.str * 0.2 + ')';
-      ctx.lineWidth = Math.max(0.1, 2 + rp3.str * 4); ctx.stroke();
-      if (rp3.r > 25) {
-        ctx.beginPath(); ctx.arc(rp3.x, rp3.y, Math.max(0.1, rp3.r * 0.55), 0, Math.PI * 2);
-        ctx.strokeStyle = 'rgba(255,80,200,' + rp3.str * 0.1 + ')';
-        ctx.lineWidth = 1; ctx.stroke();
+      // Cursor attraction — strings drift gently toward cursor
+      if(mouseActive){
+        var cdx=mouseX-pt.ox,cdy=mouseY-pt.oy;
+        var cd=Math.sqrt(cdx*cdx+cdy*cdy);
+        if(cd<180&&cd>0){
+          var pull=(1-cd/180)*0.018;
+          pt.vx+=(cdx/cd)*pull;
+          pt.vy+=(cdy/cd)*pull;
+        }
       }
+      pt.vx*=0.88;pt.vy*=0.88;
+      // Drift the origin point slowly
+      pt.ox+=pt.vx*dt*55;pt.oy+=pt.vy*dt*55;
+      // Soft clamp origin back toward initial with very gentle spring
+      pt.ox+=(pt.x-pt.ox)*0.0015;
+      pt.oy+=(pt.y-pt.oy)*0.0015;
+
+      pt.cx=nx;pt.cy=ny; // computed position
+    }
+
+    // Build color based on activation
+    var act=s.activation;
+    var pulse=Math.max(0,Math.sin(s.pulsePhase));
+    // Blue baseline: rgba(0,160,255,a) → magenta burst: rgba(255,0,180,a)
+    var r=Math.floor(act*255*pulse);
+    var g=Math.floor(160*(1-act*.85));
+    var b=Math.floor(255*(1-act*.55)+act*180*pulse);
+    var a=s.baseAlpha+act*0.22+
+          (mouseActive?mouseInfluence(s,mouseX,mouseY)*0.12:0);
+
+    // Draw the string as a smooth bezier curve through all points
+    if(pts.length<2)continue;
+    ctx.beginPath();
+    ctx.moveTo(pts[0].cx,pts[0].cy);
+    for(var pi3=1;pi3<pts.length-1;pi3++){
+      var cpx=(pts[pi3].cx+pts[pi3+1].cx)*.5;
+      var cpy=(pts[pi3].cy+pts[pi3+1].cy)*.5;
+      ctx.quadraticCurveTo(pts[pi3].cx,pts[pi3].cy,cpx,cpy);
+    }
+    ctx.lineTo(pts[pts.length-1].cx,pts[pts.length-1].cy);
+
+    // Glow pass (wider, softer)
+    if(act>0.05||a>0.12){
+      ctx.strokeStyle='rgba('+r+','+g+','+b+','+(a*.4)+')';
+      ctx.lineWidth=Math.max(0.1,(s.thickness+act*4)*2.5);
+      ctx.stroke();
+    }
+    // Core pass
+    ctx.strokeStyle='rgba('+r+','+g+','+b+','+Math.min(a*1.8,0.82)+')';
+    ctx.lineWidth=Math.max(0.1,s.thickness+act*1.8);
+    ctx.stroke();
+
+    // Draw node dots at junction points (every 4th point)
+    for(var di=0;di<pts.length;di+=4){
+      var dp=pts[di];
+      var dr=Math.max(0.3,(s.thickness*.8+act*2));
+      ctx.beginPath();ctx.arc(dp.cx,dp.cy,dr,0,Math.PI*2);
+      ctx.fillStyle='rgba('+r+','+g+','+b+','+(a*1.6)+')';ctx.fill();
     }
   }
 
   requestAnimationFrame(draw);
 }
+
+function mouseInfluence(s,mx2,my2){
+  var minD=Infinity;
+  for(var i=0;i<s.pts.length;i+=2){
+    var p=s.pts[i];
+    var d=Math.sqrt((p.cx-mx2)*(p.cx-mx2)+(p.cy-my2)*(p.cy-my2));
+    if(d<minD)minD=d;
+  }
+  return minD<180?(1-minD/180):0;
+}
+
 requestAnimationFrame(draw);
 
-// ── NAV ─────────────────────────────────────────────────
-function goTo(id) {
-  document.querySelectorAll('.page').forEach(function(p) { p.classList.remove('active'); });
-  document.querySelectorAll('.nav-links a').forEach(function(a) { a.classList.remove('active'); });
+// ── NAV ──
+function goTo(id){
+  document.querySelectorAll('.page').forEach(function(p){p.classList.remove('active');});
+  document.querySelectorAll('.nav-links a').forEach(function(a){a.classList.remove('active');});
   document.getElementById(id).classList.add('active');
-  var link = document.querySelector('[data-page="' + id + '"]');
-  if (link) link.classList.add('active');
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-  setTimeout(revAll, 150);
+  var l=document.querySelector('[data-page="'+id+'"]');if(l)l.classList.add('active');
+  window.scrollTo({top:0,behavior:'smooth'});setTimeout(revAll,150);
 }
-window.goTo = goTo;
-
-document.querySelectorAll('.nav-links a').forEach(function(a) {
-  a.addEventListener('click', function(e) { e.preventDefault(); goTo(a.dataset.page); });
+window.goTo=goTo;
+document.querySelectorAll('.nav-links a').forEach(function(a){
+  a.addEventListener('click',function(e){e.preventDefault();goTo(a.dataset.page);});
 });
-
-// ── PILLAR TOGGLE ────────────────────────────────────────
-function switchP(t, btn) {
-  document.querySelectorAll('.pgrid').forEach(function(g) { g.classList.remove('active'); });
-  document.querySelectorAll('.tog').forEach(function(b) { b.classList.remove('active'); });
-  document.getElementById('pg' + t).classList.add('active');
-  btn.classList.add('active');
+function switchP(t,btn){
+  document.querySelectorAll('.pgrid').forEach(function(g){g.classList.remove('active');});
+  document.querySelectorAll('.tog').forEach(function(b){b.classList.remove('active');});
+  document.getElementById('pg'+t).classList.add('active');btn.classList.add('active');
 }
-window.switchP = switchP;
-
-// ── SCROLL REVEAL ────────────────────────────────────────
-function revAll() {
-  var els = document.querySelectorAll('.rev:not(.vis)');
-  if (!els.length) return;
-  var io = new IntersectionObserver(function(entries) {
-    entries.forEach(function(e, i) {
-      if (e.isIntersecting) {
-        setTimeout(function() { e.target.classList.add('vis'); }, i * 75);
-        io.unobserve(e.target);
-      }
+window.switchP=switchP;
+function revAll(){
+  var io=new IntersectionObserver(function(entries){
+    entries.forEach(function(e,i){
+      if(e.isIntersecting){setTimeout(function(){e.target.classList.add('vis');},i*75);io.unobserve(e.target);}
     });
-  }, { threshold: 0.08 });
-  els.forEach(function(el) { io.observe(el); });
+  },{threshold:.08});
+  document.querySelectorAll('.rev:not(.vis)').forEach(function(el){io.observe(el);});
 }
 revAll();
-
 })();
 </script>
 </body>

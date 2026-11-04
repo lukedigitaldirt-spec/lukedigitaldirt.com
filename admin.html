@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>Site Editor — Scope Hound LLC</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=JetBrains+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="assets/css/admin.css?v=5">
+</head>
+<body>
+
+<!-- Sign in -->
+<section class="login" id="login">
+  <form class="login-box" id="login-form">
+    <div class="mark">SH</div>
+    <h1>Site editor</h1>
+    <p class="sub">Sign in with a GitHub token that can write to the site's repository. Publishing commits straight to it.</p>
+    <label for="l-repo">Repository</label>
+    <input id="l-repo" autocomplete="off" spellcheck="false" placeholder="owner/name">
+    <label for="l-branch">Branch</label>
+    <input id="l-branch" autocomplete="off" spellcheck="false" placeholder="main">
+    <label for="l-token">GitHub token</label>
+    <input id="l-token" type="password" autocomplete="off" spellcheck="false" placeholder="github_pat_…">
+    <label class="check"><input type="checkbox" id="l-remember"> Remember on this device</label>
+    <div class="msg" id="login-msg" role="status"></div>
+    <button class="b primary" type="submit">Sign in</button>
+    <button class="b link" type="button" id="offline">Edit without signing in (export only)</button>
+    <details class="help">
+      <summary>How to make a token</summary>
+      <ol>
+        <li>Open <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener">GitHub → Fine-grained tokens → New</a>.</li>
+        <li>Repository access: <b>Only select repositories</b> → this site's repo.</li>
+        <li>Permissions → Repository → <b>Contents: Read and write</b>. Nothing else.</li>
+        <li>Generate, copy, paste above. The token stays in this browser and is sent only to api.github.com.</li>
+      </ol>
+    </details>
+  </form>
+</section>
+
+<!-- Editor -->
+<div class="editor" id="editor" hidden>
+  <header class="top">
+    <div class="who"><span class="mark sm">SH</span><b>Site editor</b><span class="status" id="status"></span></div>
+    <div class="actions">
+      <button class="b" id="undo" title="Undo (⌘Z)">↶</button>
+      <button class="b" id="redo" title="Redo (⇧⌘Z)">↷</button>
+      <button class="b" id="view-toggle">Mobile view</button>
+      <button class="b" id="export">Export</button>
+      <label class="b" for="import">Import<input type="file" id="import" accept="application/json" hidden></label>
+      <button class="b" id="discard">Discard draft</button>
+      <button class="b primary" id="publish">Publish</button>
+      <button class="b link" id="signout">Sign out</button>
+    </div>
+  </header>
+  <nav class="tree" id="tree" aria-label="Site structure"></nav>
+  <main class="form" id="form"></main>
+  <section class="preview" id="preview-pane">
+    <div class="frame-wrap" id="frame-wrap"><iframe id="frame" title="Live preview"></iframe></div>
+  </section>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<script src="assets/js/shapes.js?v=5"></script>
+<script src="assets/js/admin.js?v=5"></script>
+</body>
+</html>

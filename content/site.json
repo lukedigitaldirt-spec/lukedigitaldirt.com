@@ -1,0 +1,302 @@
+{
+  "version": 1,
+  "admin": {
+    "repo": "lukedigitaldirt-spec/lukedigitaldirt.com",
+    "branch": "main"
+  },
+  "site": {
+    "brand": "Scope Hound LLC",
+    "mark": "SH",
+    "tagline": "Measure. Move. Sign off.",
+    "nav": [
+      { "label": "Home", "href": "index.html" },
+      { "label": "Work", "href": "work.html" },
+      { "label": "SiteLogix", "href": "sitelogix.html" },
+      { "label": "Free Skills", "href": "skills.html" },
+      { "label": "Research", "href": "research.html" }
+    ],
+    "ticker": {
+      "show": true,
+      "href": "research.html",
+      "label": "Digital Dirt — Project Systems",
+      "items": ["Research incubator", "Projections", "Forecasting", "Conclusions", "Lessons learned", "Best practices", "AI skills", "Article series on LinkedIn"]
+    },
+    "footer": {
+      "cred": "Connecticut · 34 project records · $71M+ contract value on record · 22 systems built and run, 2021–2026.",
+      "legal": "© {year} Scope Hound LLC. All rights reserved. Content, designs, animations, and code on this site may not be copied, reproduced, or redistributed without written permission.",
+      "links": [
+        { "label": "LinkedIn", "href": "https://www.linkedin.com/in/digitaldirt/" },
+        { "label": "Email", "href": "mailto:lukedigitaldirt@gmail.com" }
+      ]
+    },
+    "theme": {
+      "preset": "graphite",
+      "colors": {
+        "bg": "#0a0c0f",
+        "surface": "#12161b",
+        "ink": "#e8ecf0",
+        "muted": "#97a2ae",
+        "line": "#c9d3de",
+        "accent": "#ffc861"
+      }
+    },
+    "background": {
+      "objects": ["lidar", "drone", "irgun", "hardhat", "cone", "container", "cabinet", "foldertree", "controller", "shield", "terminal"],
+      "count": 14,
+      "mobileCount": 8,
+      "speed": 1,
+      "size": 1,
+      "dissolve": true,
+      "pageOpacity": 0.22
+    }
+  },
+  "pages": {
+    "home": {
+      "file": "index.html",
+      "title": "Scope Hound LLC — Construction Systems",
+      "description": "Scope Hound LLC builds project systems for construction: field capture, information pipelines, and a person who signs off on every handoff.",
+      "banner": "",
+      "sections": [
+        {
+          "type": "hero",
+          "full": true,
+          "eyebrow": "Scope Hound LLC · Construction systems",
+          "title": "Measure.\nMove.\nSign off.",
+          "lead": "Project systems for construction. Field data in, clean records out, and a person approves every handoff.",
+          "buttons": [
+            { "label": "See the work", "href": "work.html", "style": "primary" },
+            { "label": "Free skills", "href": "skills.html", "style": "ghost" }
+          ],
+          "hint": "Hover a tool"
+        },
+        {
+          "type": "stats",
+          "items": [
+            { "value": "22", "label": "Systems built & run" },
+            { "value": "34", "label": "Project records" },
+            { "value": "$71M+", "label": "Contract value on record" },
+            { "value": "$25.1M", "label": "GMPs co-built" }
+          ]
+        },
+        {
+          "type": "kit",
+          "eyebrow": "01 · Measure",
+          "title": "Field capture.",
+          "lead": "The tools that turn a site into data.",
+          "items": [
+            { "shape": "lidar", "label": "LiDAR scanner", "text": "Point clouds for as-builts and clash checks." },
+            { "shape": "drone", "label": "DJI drone", "text": "Progress and logistics from above." },
+            { "shape": "irgun", "label": "IR thermometer", "text": "Surface temps for curing, MEP, and envelope." },
+            { "shape": "hardhat", "label": "Safety systems", "text": "Hazards logged where they're found." },
+            { "shape": "container", "label": "Supply chain", "text": "Deliveries tracked from release to laydown." },
+            { "shape": "cabinet", "label": "Filing architecture", "text": "One naming rule. Every record findable." }
+          ]
+        },
+        {
+          "type": "cards",
+          "flip": true,
+          "eyebrow": "02 · Move",
+          "title": "What I build.",
+          "lead": "",
+          "items": [
+            { "kicker": "Watch", "title": "Radars", "text": "Bids, mail, and budgets watched and flagged.", "anim": "radar", "caption": "Connecticut · live signals" },
+            { "kicker": "Act", "title": "Agents", "text": "Taught one skill each. They know when to call you.", "anim": "agents", "caption": "Lead agent teaching a skill" },
+            { "kicker": "Keep", "title": "Records", "text": "Named, filed, and traceable to a source.", "anim": "records", "caption": "Bad filename → standard name" }
+          ]
+        },
+        {
+          "type": "witness",
+          "eyebrow": "03 · Sign off",
+          "title": "Every handoff gets a sign‑off.",
+          "lead": "Agents draft. A person approves. Then it goes on the record."
+        },
+        {
+          "type": "cards",
+          "eyebrow": "Building logic & security",
+          "title": "Where code meets the building.",
+          "lead": "Controls, software, and the security between them.",
+          "items": [
+            { "shape": "controller", "kicker": "Building logic", "title": "Controls & sequences", "text": "How a building decides: points, sequences, trends." },
+            { "shape": "shield", "kicker": "Cybersecurity · In progress", "title": "SANS Technology Institute", "text": "Coursework through SANS.edu, focused on the systems buildings run on.", "href": "https://www.sans.edu", "linkLabel": "sans.edu ↗" },
+            { "shape": "terminal", "kicker": "Programming", "title": "Agents & pipelines", "text": "Code that runs on live jobs: agents, trackers, web apps." }
+          ]
+        },
+        {
+          "type": "vault",
+          "id": "downloads",
+          "eyebrow": "Credentials",
+          "title": "Résumés and project record.",
+          "lead": "Luke D'Amato, founder. Each file needs a password.",
+          "requestLabel": "Request it.",
+          "requestHref": "mailto:lukedigitaldirt@gmail.com?subject=Download%20password%20request",
+          "items": [
+            { "kind": "Résumé", "title": "Project Technology", "meta": "PDF · 2 pages", "src": "assets/vault/resume-project-technology.bin", "file": "LDamato_Resume_Project-Technology_2026-10.pdf" },
+            { "kind": "Résumé", "title": "Estimating & Precon", "meta": "PDF · 2 pages", "src": "assets/vault/resume-precon.bin", "file": "LDamato_Resume_Estimating-Precon_2026-10.pdf" },
+            { "kind": "Project record", "title": "34 Projects · $71M+", "meta": "PDF · 3 pages", "src": "assets/vault/project-record.bin", "file": "LDamato_Project-and-Estimating-Record_2026.pdf" },
+            { "kind": "Systems portfolio", "title": "Radars & Pipelines", "meta": "PDF · 2 pages", "src": "assets/vault/systems-portfolio.bin", "file": "LDamato_Systems-and-Radars-Portfolio_2026-10.pdf" }
+          ]
+        }
+      ]
+    },
+    "work": {
+      "file": "work.html",
+      "title": "Work — Scope Hound LLC",
+      "description": "Systems built on live construction jobs: what each one watches, and what it did.",
+      "banner": "",
+      "sections": [
+        {
+          "type": "hero",
+          "eyebrow": "Work",
+          "title": "Systems built on live jobs.",
+          "lead": "What each one watches, and what it did.",
+          "figure": { "src": "assets/img/200-clarendon.svg", "alt": "Line drawing of 200 Clarendon Street, Boston", "caption": "Reference · 200 Clarendon, Boston" }
+        },
+        {
+          "type": "stats",
+          "items": [
+            { "value": "$71M+", "label": "Contract value on record" },
+            { "value": "$25.1M", "label": "GMPs co-built" },
+            { "value": "2,834", "label": "Schedule activities benchmarked" },
+            { "value": "06", "label": "Sectors worked" }
+          ]
+        },
+        {
+          "type": "cards",
+          "columns": 4,
+          "eyebrow": "Systems",
+          "title": "Systems.",
+          "lead": "Nothing sends without a person. Every number traces to a source.",
+          "items": [
+            { "status": "Ran", "kicker": "01.4", "title": "Follow-Up Chaser", "text": "Finds unanswered asks. Drafts the nudge. Never sends." },
+            { "status": "Ran", "kicker": "01.5", "title": "Weekly Status Watcher", "text": "Red / amber / green from the latest G703." },
+            { "status": "Delivered", "kicker": "02.2", "title": "Budget Gap Register", "text": "Every budget line: carried, partial, or missing." },
+            { "status": "Built", "kicker": "02.4", "title": "Schedule Library", "text": "631 past schedules. Durations from real jobs." },
+            { "status": "Built", "kicker": "02.6", "title": "T&M Ticket Reviewer", "text": "Reads handwritten tickets. Never guesses a number." },
+            { "status": "Ran", "kicker": "03.1", "title": "Minutes Agent", "text": "OAC minutes on four live jobs. Action items carried forward." },
+            { "status": "Used", "kicker": "03.2", "title": "Daily Intake", "text": "Dictated notes → daily log + look-ahead." },
+            { "status": "Used", "kicker": "03.3", "title": "Closeout Tracker", "text": "46 items. One linked owner binder." }
+          ]
+        },
+        {
+          "type": "cards",
+          "eyebrow": "Selected projects",
+          "title": "Selected projects.",
+          "lead": "",
+          "items": [
+            { "kicker": "$15M · Bristol, CT", "title": "24/7 broadcast facility", "text": "15 air handlers replaced, live." },
+            { "kicker": "$8M+ · New Haven, CT", "title": "Occupied residential", "text": "Grant compliance. Delivered on date." },
+            { "kicker": "$10M · Farmington, CT", "title": "Secure fit-out", "text": "Escorted access. Controlled documents." },
+            { "kicker": "$6.0M · Middletown, CT", "title": "Design-build tech HQ", "text": "33,000 SF." },
+            { "kicker": "$5.0M · Boston, MA", "title": "Office fit-out", "text": "Run remotely from Connecticut." },
+            { "kicker": "$1.1M · Westbrook, CT", "title": "Clean room", "text": "Controlled environment." }
+          ],
+          "buttons": [
+            { "label": "Full project record", "href": "index.html#downloads", "style": "primary" },
+            { "label": "Free skills", "href": "skills.html", "style": "ghost" }
+          ]
+        }
+      ]
+    },
+    "sitelogix": {
+      "file": "sitelogix.html",
+      "title": "SiteLogix — Demo · Scope Hound LLC",
+      "description": "SiteLogix: site logistics planning by phase. Preview build, in development.",
+      "banner": "Demo mode · In development · Not for field use",
+      "sections": [
+        {
+          "type": "hero",
+          "eyebrow": "SiteLogix · Preview build",
+          "title": "Site logistics planning, by phase.",
+          "lead": "Crane, gates, laydown, and deliveries in one model."
+        },
+        {
+          "type": "video",
+          "src": "assets/media/sitelogix-preview.mp4",
+          "poster": "assets/media/sitelogix-poster.jpg",
+          "badge": "Demo · In development · 3× speed",
+          "label": "SiteLogix planner preview, 3D site model played at 3x speed"
+        },
+        {
+          "type": "roadmap",
+          "eyebrow": "Development",
+          "title": "Development status.",
+          "lead": "Built in the open. Features may change.",
+          "items": [
+            { "status": "done", "label": "Concept" },
+            { "status": "done", "label": "Planner prototype" },
+            { "status": "now", "label": "Field pilot" },
+            { "status": "next", "label": "Public beta" }
+          ],
+          "buttons": [
+            { "label": "Join the beta list", "href": "mailto:lukedigitaldirt@gmail.com?subject=SiteLogix%20beta%20list", "style": "primary" },
+            { "label": "See other systems", "href": "work.html", "style": "ghost" }
+          ]
+        }
+      ]
+    },
+    "skills": {
+      "file": "skills.html",
+      "title": "Free Claude Skills for Construction — Scope Hound LLC",
+      "description": "Free Claude Skills for construction teams: RFIs, submittals, minutes, daily reports, T&M tickets, follow-ups.",
+      "banner": "",
+      "sections": [
+        {
+          "type": "hero",
+          "eyebrow": "Free tools · Claude Skills",
+          "title": "Free Claude Skills for construction.",
+          "lead": "Download, upload to Claude, use on your next job."
+        },
+        {
+          "type": "skills",
+          "filters": ["Field", "Office", "Precon"],
+          "items": [
+            { "name": "RFI Intake", "tags": ["Office", "Field"], "text": "Field question in. Numbered RFI draft out.", "file": "skills/rfi-intake.zip" },
+            { "name": "Submittal Intake", "tags": ["Office", "Precon"], "text": "One naming rule. One register.", "file": "skills/submittal-intake.zip" },
+            { "name": "Meeting Minutes", "tags": ["Office"], "text": "Transcript to OAC minutes. Actions carried forward.", "file": "skills/meeting-minutes.zip" },
+            { "name": "Daily Report Intake", "tags": ["Field"], "text": "Dictated notes to a daily log and look-ahead.", "file": "skills/daily-report-intake.zip" },
+            { "name": "T&M Ticket Review", "tags": ["Field", "Office"], "text": "Approve, review, or reject. Never guesses a number.", "file": "skills/tm-ticket-review.zip" },
+            { "name": "Follow-Up Chaser", "tags": ["Office", "Precon"], "text": "Who hasn't answered. Drafts the nudge.", "file": "skills/follow-up-chaser.zip" }
+          ]
+        },
+        {
+          "type": "steps",
+          "eyebrow": "Install",
+          "title": "How to install.",
+          "lead": "",
+          "items": [
+            { "title": "Download", "text": "Grab the .zip." },
+            { "title": "Upload", "text": "Claude → Settings → Capabilities → Skills → Upload." },
+            { "title": "Ask", "text": "\"Write an RFI from this note.\" Claude picks it up." }
+          ],
+          "note": "Drafts only. A person reviews before anything is sent. Provided as-is, free for your own team's use."
+        }
+      ]
+    },
+    "research": {
+      "file": "research.html",
+      "title": "Digital Dirt — Project Systems · Research",
+      "description": "Digital Dirt — Project Systems: a research incubator and dated article series on construction systems.",
+      "banner": "",
+      "sections": [
+        {
+          "type": "hero",
+          "eyebrow": "Research incubator",
+          "title": "Digital Dirt — Project Systems.",
+          "lead": "An article series. Revised and reissued here, by date.",
+          "tags": ["Projections", "Forecasting", "Conclusions", "Lessons learned", "Best practices", "AI skills"]
+        },
+        {
+          "type": "issues",
+          "eyebrow": "Issues",
+          "title": "",
+          "lead": "",
+          "empty": "Issue 01 is being revised for reissue. Read the originals on LinkedIn.",
+          "items": [],
+          "buttons": [
+            { "label": "All articles on LinkedIn →", "href": "https://www.linkedin.com/in/digitaldirt/recent-activity/articles/", "style": "ghost" }
+          ]
+        }
+      ]
+    }
+  }
+}

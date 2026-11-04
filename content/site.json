@@ -54,7 +54,7 @@
     "home": {
       "file": "index.html",
       "title": "Scope Hound LLC — Construction Systems",
-      "description": "Scope Hound LLC builds project systems for construction: field capture, information pipelines, and a person who signs off on every handoff.",
+      "description": "Scope Hound LLC builds project systems for construction: field capture, information pipelines, with a human in the loop.",
       "banner": "",
       "sections": [
         {
@@ -62,7 +62,7 @@
           "full": true,
           "eyebrow": "Scope Hound LLC · Construction systems",
           "title": "Measure.\nMove.\nSign off.",
-          "lead": "Project systems for construction. Field data in, clean records out, and a person approves every handoff.",
+          "lead": "Project systems for construction. Field data in, clean records out. Human in the loop.",
           "buttons": [
             { "label": "See the work", "href": "work.html", "style": "primary" },
             { "label": "Free skills", "href": "skills.html", "style": "ghost" }
@@ -107,8 +107,8 @@
         {
           "type": "witness",
           "eyebrow": "03 · Sign off",
-          "title": "Every handoff gets a sign‑off.",
-          "lead": "Agents draft. A person approves. Then it goes on the record."
+          "title": "Human in the loop.",
+          "lead": "Agents draft. Review, then record."
         },
         {
           "type": "cards",
@@ -165,7 +165,7 @@
           "columns": 4,
           "eyebrow": "Systems",
           "title": "Systems.",
-          "lead": "Nothing sends without a person. Every number traces to a source.",
+          "lead": "Human in the loop. Every number traces to a source.",
           "items": [
             { "status": "Ran", "kicker": "01.4", "title": "Follow-Up Chaser", "text": "Finds unanswered asks. Drafts the nudge. Never sends." },
             { "status": "Ran", "kicker": "01.5", "title": "Weekly Status Watcher", "text": "Red / amber / green from the latest G703." },
@@ -268,7 +268,7 @@
             { "title": "Upload", "text": "Claude → Settings → Capabilities → Skills → Upload." },
             { "title": "Ask", "text": "\"Write an RFI from this note.\" Claude picks it up." }
           ],
-          "note": "Drafts only. A person reviews before anything is sent. Provided as-is, free for your own team's use."
+          "note": "Drafts only, human in the loop. Provided as-is, free for your own team's use."
         }
       ]
     },

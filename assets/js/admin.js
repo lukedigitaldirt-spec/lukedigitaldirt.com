@@ -48,7 +48,7 @@ var STARTERS={
   stats:{items:[{value:'00',label:'Label'}]},
   cards:{title:'Section title.',items:[{kicker:'Kicker',title:'Card title',text:'One line.'}]},
   kit:{title:'Tools.',items:[{shape:'lidar',label:'LiDAR scanner',text:''}]},
-  witness:{eyebrow:'Sign off',title:'Every handoff gets a sign-off.'},
+  witness:{eyebrow:'Sign off',title:'Human in the loop.'},
   text:{title:'Section title.',body:'First paragraph.\n\nSecond paragraph.'},
   gallery:{title:'Gallery.',items:[]},
   buttons:{items:[{label:'Button',href:'index.html',style:'primary'}]},
@@ -296,7 +296,7 @@ function field(obj,key,spec,label){
   else if(spec==='shape'){inp=el('select',{id:id},[el('option',{value:'',text:'(none)'})].concat(Shapes.names.map(function(n){return el('option',{value:n,text:Shapes.defs[n].label});})));inp.value=v;
     var ic=el('canvas',{class:'shape-prev','aria-hidden':'true'});
     inp.addEventListener('change',function(){set(inp.value);drawIc();});
-    function drawIc(){ic.getContext('2d').clearRect(0,0,ic.width,ic.height);if(inp.value)Shapes.icon(ic,inp.value,'#c9d3de');}
+    function drawIc(){ic.getContext('2d').clearRect(0,0,ic.width,ic.height);if(inp.value)Shapes.icon(ic,inp.value,'#c9d3de',{still:true});}
     wrap.appendChild(el('div',{class:'inline'},[inp,ic]));setTimeout(drawIc);return wrap;}
   else if(spec==='textarea'){inp=el('textarea',{id:id,rows:String(Math.min(8,Math.max(2,String(v).split('\n').length+1)))});inp.value=v;inp.addEventListener('input',function(){set(inp.value);});}
   else if(spec==='number'){inp=el('input',{type:'number',id:id,step:'any'});inp.value=v;inp.addEventListener('input',function(){set(inp.value===''?'':+inp.value);});}
@@ -371,7 +371,7 @@ function bgForm(f){
     var on=b.objects.indexOf(n)>=0,cv=el('canvas',{'aria-hidden':'true'});
     var btn=el('button',{type:'button',class:'obj'+(on?' on':''),'aria-pressed':String(on),onclick:function(){
       var i=b.objects.indexOf(n);if(i>=0)b.objects.splice(i,1);else b.objects.push(n);changed({now:true});drawForm();}},[cv,el('span',{text:Shapes.defs[n].label})]);
-    grid.appendChild(btn);setTimeout(function(){Shapes.icon(cv,n,'#c9d3de');});
+    grid.appendChild(btn);setTimeout(function(){Shapes.icon(cv,n,'#c9d3de',{still:true});});
   });
   f.appendChild(grid);
   fields(f,b,{count:'number',mobileCount:'number',speed:'number',size:'number',pageOpacity:'number',dissolve:'bool'});

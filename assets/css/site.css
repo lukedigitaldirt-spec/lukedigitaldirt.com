@@ -145,8 +145,7 @@ section.tight{padding-top:0;}
 @media (max-width:900px){.kit{grid-template-columns:repeat(2,1fr);}}
 @media (max-width:520px){.kit{grid-template-columns:1fr;}}
 .kit-item{background:var(--panel);border:1px solid var(--hair);padding:28px;display:grid;grid-template-columns:96px 1fr;gap:20px;align-items:center;backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);}
-.kit-item canvas{width:96px;height:96px;transition:transform .6s cubic-bezier(.2,.7,.2,1);}
-.kit-item:hover canvas{transform:rotate(-8deg) scale(1.06);}
+.kit-item canvas{width:96px;height:96px;}
 .kit-item h3{font-size:17px;}
 .kit-item p{color:var(--muted);font-size:15px;margin-top:6px;}
 

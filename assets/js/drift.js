@@ -1,5 +1,5 @@
-/* Zero-gravity field of outlined tech objects.
-   Objects drift, spin, and bounce off each other and the edges. Hovering one breaks it
+/* Zero-gravity field of 3D wireframe tech objects.
+   Objects drift, tumble on all three axes, and bounce off each other and the edges. Hovering one breaks it
    into 1s and 0s, which drift apart and then fly back to rebuild it.
    Hero mode: starts black, lifts to reveal the objects, and dims them as you scroll. */
 (function(){
@@ -18,16 +18,15 @@ function start(canvas,cfg,opts){
   var names=(cfg.objects&&cfg.objects.length?cfg.objects:Shapes.names).filter(function(n){return Shapes.defs[n];});
   var speed=(cfg.speed==null?1:+cfg.speed),scale=(cfg.size==null?1:+cfg.size),dim=(cfg.pageOpacity==null?.22:+cfg.pageOpacity);
   var dissolveOn=cfg.dissolve!==false&&!reduced,hero=!!opts.hero;
-  var lineC,accC,digits={};
+  var lineC,inkC,accC,digits={};
   var ptr={x:-1e4,y:-1e4,on:false};
 
   function colors(){
-    lineC=css('--line');accC=css('--accent');
+    lineC=css('--line');inkC=css('--ink');accC=css('--accent');
     ['0','1'].forEach(function(ch){[['l',lineC],['a',accC]].forEach(function(p){
       var c=document.createElement('canvas'),s=Math.round(13*dpr);c.width=s;c.height=Math.round(s*1.3);
       var x=c.getContext('2d');x.font='500 '+(11*dpr)+'px "JetBrains Mono",monospace';x.fillStyle=p[1];x.textBaseline='top';x.fillText(ch,0,1);
       digits[ch+p[0]]=c;});});
-    objs.forEach(function(o){o.spr=Shapes.sprite(o.name,o.size*dpr,lineC,1.5*dpr,6*dpr);});
   }
   function resize(){
     var r=canvas.getBoundingClientRect();W=r.width||innerWidth;H=r.height||innerHeight;
@@ -35,12 +34,12 @@ function start(canvas,cfg,opts){
     objs.forEach(function(o){o.x=clamp(o.x,o.r,W-o.r);o.y=clamp(o.y,o.r,H-o.r);});
   }
   function build(){
-    var n=W<700?(cfg.mobileCount||8):(cfg.count||14),base=clamp(Math.min(W,H)*.14,64,150)*scale;
+    var n=W<700?(cfg.mobileCount||8):(cfg.count||14),base=clamp(Math.min(W,H)*.22,90,200)*scale;
     objs=[];
     for(var i=0;i<n;i++){
-      var size=base*rnd(.75,1.25),r=size*.46,a=rnd(0,6.283),v=rnd(8,20)*speed;
+      var size=base*rnd(.8,1.3),r=size*.45,a=rnd(0,6.283),v=rnd(8,20)*speed;
       var o={name:names[i%names.length],size:size,r:r,x:rnd(r,Math.max(r+1,W-r)),y:rnd(r,Math.max(r+1,H-r)),vx:Math.cos(a)*v,vy:Math.sin(a)*v,
-        rot:rnd(-.6,.6),vr:rnd(-.12,.12),ph:rnd(0,6.283),delay:i*.09,state:'solid',fade:1,timer:0,bits:null};
+        ax:rnd(-.6,.2),ay:rnd(0,6.283),az:rnd(-.3,.3),wx:rnd(-.12,.12),wy:rnd(.1,.3)*(Math.random()<.5?-1:1),wz:rnd(-.08,.08),ph:rnd(0,6.283),delay:i*.09,state:'solid',fade:1,timer:0,bits:null};
       // avoid starting on top of each other
       for(var k=0;k<20&&objs.some(function(p){return Math.hypot(p.x-o.x,p.y-o.y)<p.r+o.r;});k++){o.x=rnd(r,W-r);o.y=rnd(r,H-r);}
       objs.push(o);
@@ -49,7 +48,8 @@ function start(canvas,cfg,opts){
     colors();
   }
 
-  function local(o,p){var c=Math.cos(o.rot),s=Math.sin(o.rot),x=p[0]*o.size,y=p[1]*o.size;return[o.x+x*c-y*s,o.y+x*s+y*c];}
+  function mat(o){return Shapes.mat(o.ax,o.ay,o.az);}
+  function local(o,p){return Shapes.project(p,mat(o),o.x,o.y,o.size/2);}
   function dissolve(o){
     o.state='gone';o.timer=0;o.bits=[];
     var pts=Shapes.points(o.name,Math.round(clamp(o.size*.75,40,110)));
@@ -64,12 +64,12 @@ function start(canvas,cfg,opts){
     t+=dt;
     // move + walls
     objs.forEach(function(o){
-      o.x+=o.vx*dt;o.y+=o.vy*dt;o.rot+=o.vr*dt;
+      o.x+=o.vx*dt;o.y+=o.vy*dt;o.ax+=o.wx*dt*speed;o.ay+=o.wy*dt*speed;o.az+=o.wz*dt*speed;
       if(o.x<o.r){o.x=o.r;o.vx=Math.abs(o.vx);}if(o.x>W-o.r){o.x=W-o.r;o.vx=-Math.abs(o.vx);}
       if(o.y<o.r){o.y=o.r;o.vy=Math.abs(o.vy);}if(o.y>H-o.r){o.y=H-o.r;o.vy=-Math.abs(o.vy);}
       var v=Math.hypot(o.vx,o.vy),lo=6*speed,hi=26*speed;
       if(v<lo&&v>0){o.vx*=lo/v;o.vy*=lo/v;}else if(v>hi){o.vx*=hi/v;o.vy*=hi/v;}
-      o.vr=clamp(o.vr,-.3,.3);
+      o.wx=clamp(o.wx,-.5,.5);o.wy=clamp(o.wy,-.6,.6);o.wz=clamp(o.wz,-.4,.4);
     });
     // collisions (only solid objects collide)
     for(var i=0;i<objs.length;i++)for(var j=i+1;j<objs.length;j++){
@@ -80,7 +80,7 @@ function start(canvas,cfg,opts){
         var rv=(b.vx-a.vx)*nx+(b.vy-a.vy)*ny;
         if(rv<0){var ma=a.r*a.r,mb=b.r*b.r,imp=-2*rv/(ma+mb);
           a.vx-=imp*mb*nx;a.vy-=imp*mb*ny;b.vx+=imp*ma*nx;b.vy+=imp*ma*ny;
-          a.vr+=rnd(-.08,.08);b.vr+=rnd(-.08,.08);
+          a.wx+=rnd(-.15,.15);a.wz+=rnd(-.1,.1);b.wx+=rnd(-.15,.15);b.wz+=rnd(-.1,.1);
           if(Math.random()<.6)glint(a.x+nx*a.r,a.y+ny*a.r);}
       }
     }
@@ -123,8 +123,8 @@ function start(canvas,cfg,opts){
       var a=hero?ease((t-.4-o.delay)/1.6):1;
       var shimmer=.8+.2*Math.sin(t*.9+o.ph);
       var alpha=a*o.fade*shimmer*m.amp;if(alpha<=.01)return;
-      ctx.save();ctx.globalAlpha=alpha;ctx.translate(o.x,o.y);ctx.rotate(o.rot);
-      var s=o.spr.width/dpr;ctx.drawImage(o.spr,-s/2,-s/2,s,s);ctx.restore();
+      var sweep=((t*.45+o.ph)%4)-2;                         // a highlight that passes over the edges now and then
+      Shapes.render(ctx,o.name,o.x,o.y,o.size/2,mat(o),{color:lineC,hot:inkC,alpha:alpha,lw:1.5,sweep:sweep});
     });
     var amp=Math.max(m.amp,.5);
     parts.forEach(function(b){var sp=digits[b.ch+(b.acc?'a':'l')];ctx.globalAlpha=.9*amp;ctx.drawImage(sp,b.x-sp.width/dpr/2,b.y-sp.height/dpr/2,sp.width/dpr,sp.height/dpr);});

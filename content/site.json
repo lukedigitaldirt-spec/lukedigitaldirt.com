@@ -148,8 +148,7 @@
           "type": "hero",
           "eyebrow": "Work",
           "title": "Systems built on live jobs.",
-          "lead": "What each one watches, and what it did.",
-          "figure": { "src": "assets/img/200-clarendon.svg", "alt": "Line drawing of 200 Clarendon Street, Boston", "caption": "Reference · 200 Clarendon, Boston" }
+          "lead": "What each one watches, and what it did."
         },
         {
           "type": "stats",

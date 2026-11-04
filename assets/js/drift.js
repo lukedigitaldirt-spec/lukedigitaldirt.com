@@ -18,6 +18,7 @@ function start(canvas,cfg,opts){
   var names=(cfg.objects&&cfg.objects.length?cfg.objects:Shapes.names).filter(function(n){return Shapes.defs[n];});
   var speed=(cfg.speed==null?1:+cfg.speed),scale=(cfg.size==null?1:+cfg.size),dim=(cfg.pageOpacity==null?.22:+cfg.pageOpacity);
   var dissolveOn=cfg.dissolve!==false&&!reduced,hero=!!opts.hero;
+  var bright=(cfg.brightness==null?.42:+cfg.brightness),glowC=cfg.glow||'#39ff88';
   var lineC,inkC,accC,digits={};
   var ptr={x:-1e4,y:-1e4,on:false};
 
@@ -64,7 +65,7 @@ function start(canvas,cfg,opts){
     t+=dt;
     // move + walls
     objs.forEach(function(o){
-      o.x+=o.vx*dt;o.y+=o.vy*dt;o.ax+=o.wx*dt*speed;o.ay+=o.wy*dt*speed;o.az+=o.wz*dt*speed;
+      o.x+=o.vx*dt;o.y+=o.vy*dt;o.ax+=o.wx*dt*speed*.35;o.ay+=o.wy*dt*speed*.35;o.az+=o.wz*dt*speed*.35;
       if(o.x<o.r){o.x=o.r;o.vx=Math.abs(o.vx);}if(o.x>W-o.r){o.x=W-o.r;o.vx=-Math.abs(o.vx);}
       if(o.y<o.r){o.y=o.r;o.vy=Math.abs(o.vy);}if(o.y>H-o.r){o.y=H-o.r;o.vy=-Math.abs(o.vy);}
       var v=Math.hypot(o.vx,o.vy),lo=6*speed,hi=26*speed;
@@ -123,8 +124,8 @@ function start(canvas,cfg,opts){
       var a=hero?ease((t-.4-o.delay)/1.6):1;
       var shimmer=.8+.2*Math.sin(t*.9+o.ph);
       var alpha=a*o.fade*shimmer*m.amp;if(alpha<=.01)return;
-      var sweep=((t*.45+o.ph)%4)-2;                         // a highlight that passes over the edges now and then
-      Shapes.render(ctx,o.name,o.x,o.y,o.size/2,mat(o),{color:lineC,hot:inkC,alpha:alpha,lw:1.5,sweep:sweep,t:t});
+      var sweep=((t*.15+o.ph)%4)-2;                         // a highlight that passes over the edges now and then
+      Shapes.render(ctx,o.name,o.x,o.y,o.size/2,mat(o),{color:lineC,hot:inkC,alpha:alpha*bright,lw:1.5,sweep:sweep,t:t,aura:glowC});
     });
     var amp=Math.max(m.amp,.5);
     parts.forEach(function(b){var sp=digits[b.ch+(b.acc?'a':'l')];ctx.globalAlpha=.9*amp;ctx.drawImage(sp,b.x-sp.width/dpr/2,b.y-sp.height/dpr/2,sp.width/dpr,sp.height/dpr);});

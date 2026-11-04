@@ -107,7 +107,7 @@ var M={
     // two-blade props spinning on every motor
     c.strokeStyle=o.color;
     sp.motors.forEach(function(m,i){
-      var a=o.t*22*(i%2?1:-1)+i,L=.3,w=.035;
+      var a=o.t*8*(i%2?1:-1)+i,L=.3,w=.035;
       c.globalAlpha=o.alpha*.16;c.lineWidth=o.lw*.6;c.beginPath();
       for(var j=0;j<=28;j++){var b=j/28*TAU,p=P(m[0]+Math.cos(b)*L,m[1],m[2]+Math.sin(b)*L);j?c.lineTo(p[0],p[1]):c.moveTo(p[0],p[1]);}c.stroke();
       c.globalAlpha=o.alpha*.85;c.lineWidth=o.lw;c.beginPath();
@@ -302,6 +302,11 @@ function render(ctx,name,cx,cy,R,m,o){
     bx[band].push(cx+X1*p1,cy-Y1*p1,cx+X2*p2,cy-Y2*p2);
   }
   ctx.lineCap='round';ctx.lineJoin='round';
+  if(o.aura){                                               // soft neon glow behind the whole object
+    ctx.beginPath();for(var g2=0;g2<=BANDS;g2++){var A=bx[g2];for(var j2=0;j2<A.length;j2+=4){ctx.moveTo(A[j2],A[j2+1]);ctx.lineTo(A[j2+2],A[j2+3]);}}
+    ctx.save();ctx.strokeStyle=o.aura;ctx.shadowColor=o.aura;ctx.shadowBlur=R*.18;
+    ctx.globalAlpha=Math.min(1,alpha*.45);ctx.lineWidth=lw*1.8;ctx.stroke();ctx.restore();
+  }
   for(var bi=0;bi<=BANDS;bi++){
     var L=bx[bi];if(!L.length)continue;
     var hot=bi===BANDS,d=hot?1:bi/(BANDS-1);
@@ -312,7 +317,7 @@ function render(ctx,name,cx,cy,R,m,o){
   var def=M[name];
   if(def&&def.fx&&o.t!=null){
     var k=s.k,P=function(x,y,z){x*=k;y*=k;z*=k;var X=m[0]*x+m[1]*y+m[2]*z,Y=m[3]*x+m[4]*y+m[5]*z,Z=m[6]*x+m[7]*y+m[8]*z,q=D/(D-Z)*R*.86;return[cx+X*q,cy-Y*q,Z];};
-    ctx.save();def.fx(ctx,P,{t:o.t,alpha:alpha,color:o.color,hot:o.hot||o.color,lw:lw},s.spots,s.paths);ctx.restore();
+    ctx.save();def.fx(ctx,P,{t:o.t*.3,alpha:alpha,color:o.color,hot:o.hot||o.color,lw:lw},s.spots,s.paths);ctx.restore();
   }
   ctx.globalAlpha=1;
 }
@@ -346,7 +351,7 @@ function tick(now){
   var dt=Math.min(.05,(now-lastT)/1000||0);lastT=now;
   spinning=spinning.filter(function(it){return it.cv.isConnected;});
   spinning.forEach(function(it){var r=it.cv.getBoundingClientRect();if(r.bottom<0||r.top>innerHeight)return;
-    it.yaw+=dt*(it.cv.matches(':hover')||(it.cv.parentElement&&it.cv.parentElement.matches(':hover'))?1.6:.35);paint(it);});
+    it.yaw+=dt*(it.cv.matches(':hover')||(it.cv.parentElement&&it.cv.parentElement.matches(':hover'))?.5:.12);paint(it);});
   spinRaf=spinning.length?requestAnimationFrame(tick):0;
 }
 function icon(canvas,name,color,opt){

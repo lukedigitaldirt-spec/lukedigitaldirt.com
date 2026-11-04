@@ -47,6 +47,8 @@
       "speed": 1,
       "size": 1,
       "dissolve": true,
+      "brightness": 0.42,
+      "glow": "#39ff88",
       "pageOpacity": 0.22
     }
   },

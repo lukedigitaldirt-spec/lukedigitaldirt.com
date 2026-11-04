@@ -374,8 +374,8 @@ function bgForm(f){
     grid.appendChild(btn);setTimeout(function(){Shapes.icon(cv,n,'#c9d3de',{still:true});});
   });
   f.appendChild(grid);
-  fields(f,b,{count:'number',mobileCount:'number',speed:'number',size:'number',pageOpacity:'number',dissolve:'bool'});
-  f.appendChild(el('p',{class:'hint',text:'Count: objects on desktop. Speed and size: 1 is normal. Page opacity: how bright they are behind content (0 to 1).'}));
+  fields(f,b,{count:'number',mobileCount:'number',speed:'number',size:'number',brightness:'number',glow:'text',pageOpacity:'number',dissolve:'bool'});
+  f.appendChild(el('p',{class:'hint',text:'Count: objects on desktop. Speed and size: 1 is normal. Brightness: how strong the outlines are (0 to 1). Glow: aura color as a hex code, e.g. #39ff88. Page opacity: how bright they are behind content (0 to 1).'}));
 }
 
 /* ── export / import / discard ── */

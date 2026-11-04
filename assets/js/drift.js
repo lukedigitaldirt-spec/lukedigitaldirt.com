@@ -124,7 +124,7 @@ function start(canvas,cfg,opts){
       var shimmer=.8+.2*Math.sin(t*.9+o.ph);
       var alpha=a*o.fade*shimmer*m.amp;if(alpha<=.01)return;
       var sweep=((t*.45+o.ph)%4)-2;                         // a highlight that passes over the edges now and then
-      Shapes.render(ctx,o.name,o.x,o.y,o.size/2,mat(o),{color:lineC,hot:inkC,alpha:alpha,lw:1.5,sweep:sweep});
+      Shapes.render(ctx,o.name,o.x,o.y,o.size/2,mat(o),{color:lineC,hot:inkC,alpha:alpha,lw:1.5,sweep:sweep,t:t});
     });
     var amp=Math.max(m.amp,.5);
     parts.forEach(function(b){var sp=digits[b.ch+(b.acc?'a':'l')];ctx.globalAlpha=.9*amp;ctx.drawImage(sp,b.x-sp.width/dpr/2,b.y-sp.height/dpr/2,sp.width/dpr,sp.height/dpr);});

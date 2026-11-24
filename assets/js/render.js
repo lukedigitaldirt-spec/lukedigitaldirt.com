@@ -8,7 +8,7 @@ var PAGE=document.body.dataset.page||'home';
 var PREVIEW=/[?&]preview\b/.test(location.search)&&window.parent!==window;
 var qp=location.search.match(/[?&]page=([\w-]+)/);if(PREVIEW&&qp)PAGE=qp[1];
 var app=document.getElementById('app'),bg=document.getElementById('bg');
-var uploads={},drift=null,driftKey='',firstRender=true,io=null;
+var uploads={},drift=null,driftKey='',firstRender=true,io=null,b4d=null;
 
 /* ── helpers ── */
 function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
@@ -185,11 +185,28 @@ function mount(data){
   else{io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('vis');io.unobserve(e.target);}});},{threshold:.08});
     app.querySelectorAll('.rev').forEach(function(el){io.observe(el);});}
 
-  // floating objects: restart only when the background settings or hero mode change
+  // background: the 4D build on pages that ask for it (scroll drives construction), otherwise floating objects.
+  // Floating objects restart only when the background settings or hero mode change.
   var first=(page.sections||[]).filter(function(s){return!s.hidden;})[0],hero=!!(first&&first.type==='hero'&&first.full);
   var key=JSON.stringify(site.background||{})+hero;
-  if(key!==driftKey){if(drift)drift.stop();driftKey=key;drift=Drift.start(bg,site.background,{hero:hero});}
-  else if(drift)drift.recolor();
+  function floating(){
+    bg.style.display='';
+    if(key!==driftKey){if(drift)drift.stop();driftKey=key;drift=Drift.start(bg,site.background,{hero:hero});}
+    else if(drift)drift.recolor();
+  }
+  var b4=page.background4d;
+  if(b4&&!b4.off&&!PREVIEW&&b4d!=='failed'){
+    if(drift){drift.stop();drift=null;driftKey='';}
+    bg.style.display='none';
+    if(!b4d){
+      b4d='loading';
+      var cfg4=Object.assign({},b4,{onfail:function(){b4d='failed';floating();}});
+      var go=function(){if(!window.Build4D||!Build4D.start(cfg4)){b4d='failed';floating();}else b4d='on';};
+      if(window.Build4D)go();
+      else{var sc=document.createElement('script');sc.src=b4.script||'assets/4d/build4d.js?v=1';sc.async=true;sc.onload=go;
+        sc.onerror=function(){b4d='failed';floating();};document.head.appendChild(sc);}
+    }
+  }else floating();
 
   // dark-to-light intro on the landing hero
   if(hero&&firstRender&&!PREVIEW&&!matchMedia('(prefers-reduced-motion: reduce)').matches){

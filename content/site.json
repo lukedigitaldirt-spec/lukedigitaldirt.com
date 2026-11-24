@@ -58,6 +58,7 @@
       "title": "Scope Hound LLC — Construction Systems",
       "description": "Scope Hound LLC builds project systems for construction: field capture, information pipelines, with a human in the loop.",
       "banner": "",
+      "background4d": { "plan": "assets/4d/plan.json", "script": "assets/4d/build4d.js?v=1", "label": "4D logistics plan · multifamily tower", "glow": "#39ff88", "dimTo": 0.55 },
       "sections": [
         {
           "type": "hero",
@@ -69,7 +70,7 @@
             { "label": "See the work", "href": "work.html", "style": "primary" },
             { "label": "Free skills", "href": "skills.html", "style": "ghost" }
           ],
-          "hint": "Hover a tool"
+          "hint": "Scroll to build"
         },
         {
           "type": "stats",
